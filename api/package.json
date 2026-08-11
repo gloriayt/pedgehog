@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/server.ts",
     "lint": "biome check --write ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@fastify/cors": "^11.3.0",
     "dotenv": "^17.4.2",
@@ -22,7 +22,7 @@
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
     "node-pg-migrate": "^8.0.4",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
 }
