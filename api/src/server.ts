@@ -2,13 +2,14 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { Pool } from 'pg';
 import 'dotenv/config';
+import { StartWalkInput, EndWalkInput, LogStressorEventInput } from '@pedgehog/shared';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const app = Fastify({ logger: true });
 
 await app.register(cors, {
   origin: /^http:\/\/localhost:\d+$/,
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
 });
 
 app.get('/health', async () => ({ status: 'ok' }));
@@ -31,7 +32,12 @@ app.post('/dog_profiles', async (req, reply) => {
 
 // ------ walks
 app.post('/walks', async (req, reply) => {
-  const { dog_id } = req.body as { dog_id: number };
+  const parsed = StartWalkInput.safeParse(req.body);
+  if (!parsed.success) {
+    reply.code(400);
+    return { error: parsed.error.flatten() };
+  }
+  const { dog_id } = parsed.data;
   const { rows } = await pool.query(
     'INSERT INTO walks (dog_id, started_at) VALUES ($1, NOW()) RETURNING *',
     [dog_id]
@@ -57,28 +63,26 @@ app.get('/walks/:id', async (req) => {
   return rows[0];
 });
 
-app.patch('/walks/:id', async (req) => {
+app.patch('/walks/:id', async (req, reply) => {
   const { id } = req.params as { id: number };
-  const { stress_score } = req.body as { stress_score?: number };
+  const parsed = EndWalkInput.safeParse(req.body);
+  if (!parsed.success) {
+    reply.code(400);
+    return { error: parsed.error.flatten() };
+  }
+  const { stress_score } = parsed.data;
 
   await pool.query('UPDATE walks SET ended_at = NOW(), stress_score = $2 WHERE id = $1', [id, stress_score ?? null]);
 
-  const { rows: pointCount } = await pool.query(
-    'SELECT COUNT(*) FROM walk_points WHERE walk_id = $1', [id]
-  );
-
-  if (Number(pointCount[0].count) >= 2) {
-    await pool.query(`
-      UPDATE walks
-      SET route = ST_Simplify(
-        (SELECT ST_MakeLine(location::geometry ORDER BY recorded_at) FROM walk_points WHERE walk_id = $1),
-        0.00005
-      )::geography
-      WHERE id = $1
-    `, [id]);
-
-    await pool.query(`UPDATE walks SET distance = ST_Length(route) WHERE id = $1`, [id]);
-  }
+  await pool.query(`
+    WITH line AS (
+      SELECT ST_Simplify(ST_MakeLine(location::geometry ORDER BY recorded_at), 0.00005)::geography AS route
+      FROM walk_points WHERE walk_id = $1
+      HAVING COUNT(*) >= 2
+    )
+    UPDATE walks SET route = line.route, distance = ST_Length(line.route)
+    FROM line WHERE walks.id = $1
+  `, [id]);
 
   const { rows } = await pool.query('SELECT * FROM walks WHERE id = $1', [id]);
   return rows[0];
@@ -106,14 +110,15 @@ app.get('/stressor-types', async () => {
 
 // ------ stressor events
 app.post('/stressor-events', async (req, reply) => {
+  const parsed = LogStressorEventInput.safeParse(req.body);
+  if (!parsed.success) {
+    reply.code(400);
+    return { error: parsed.error.flatten() };
+  }
   const {
     dog_id, stressor_type_id, occurred_at, duration_minutes,
     intensity, walk_id, lat, lng, notes
-  } = req.body as {
-    dog_id: number; stressor_type_id: number; occurred_at?: string;
-    duration_minutes?: number; intensity?: number; walk_id?: number;
-    lat?: number; lng?: number; notes?: string;
-  };
+  } = parsed.data;
 
   const { rows } = await pool.query(
     `INSERT INTO stressor_events

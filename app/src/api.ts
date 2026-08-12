@@ -1,5 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import type { Walk, StressorType } from '@pedgehog/shared';
 
+const API_URL = import.meta.env.VITE_API_URL;
 class ApiError extends Error {}
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -20,24 +21,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export type Walk = {
-  id: number;
-  dog_id: number;
-  started_at: string;
-  ended_at: string | null;
-  distance: number | null;
-  stress_score: number | null;
-};
-
 // ------ walks
-export function startWalk(dogId: number) {
+export function startWalk(dogId: number): Promise<Walk> {
   return request<Walk>('/walks', {
     method: 'POST',
     body: JSON.stringify({ dog_id: dogId }),
   });
 }
 
-export function endWalk(walkId: number, stressScore?: number) {
+export function endWalk(walkId: number, stressScore?: number): Promise<Walk> {
   return request<Walk>(`/walks/${walkId}`, {
     method: 'PATCH',
     body: JSON.stringify({ stress_score: stressScore }),
@@ -45,9 +37,28 @@ export function endWalk(walkId: number, stressScore?: number) {
 }
 
 // ------- walk gps points
-export function logPoint(walkId: number, lat: number, lng: number) {
+export function logPoint(walkId: number, lat: number, lng: number): Promise<void> {
   return request<void>(`/walks/${walkId}/points`, {
     method: 'POST',
     body: JSON.stringify({ lat, lng }),
+  });
+}
+
+export function getStressorTypes(): Promise<StressorType[]> {
+  return request<StressorType[]>('/stressor-types');
+}
+
+export function logStressorEvent(params: {
+  dog_id: number;
+  stressor_type_id: number;
+  walk_id?: number;
+  intensity?: number;
+  notes?: string;
+  lat?: number;
+  lng?: number;
+}): Promise<void> {
+  return request<void>('/stressor-events', {
+    method: 'POST',
+    body: JSON.stringify(params),
   });
 }
