@@ -1,9 +1,15 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors';
 import { Pool } from 'pg';
 import 'dotenv/config';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const app = Fastify({ logger: true });
+
+await app.register(cors, {
+  origin: /^http:\/\/localhost:\d+$/,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+});
 
 app.get('/health', async () => ({ status: 'ok' }));
 
@@ -35,7 +41,7 @@ app.post('/walks', async (req, reply) => {
 });
 
 app.get('/walks', async (req) => {
-  const { dog_id } = req.query as { dog_id?: string };
+  const { dog_id } = req.query as { dog_id?: number };
   const { rows } = await pool.query(
     dog_id
       ? 'SELECT * FROM walks WHERE dog_id = $1 ORDER BY started_at DESC'
@@ -46,13 +52,13 @@ app.get('/walks', async (req) => {
 });
 
 app.get('/walks/:id', async (req) => {
-  const { id } = req.params as { id: string };
+  const { id } = req.params as { id: number };
   const { rows } = await pool.query('SELECT * FROM walks WHERE id = $1', [id]);
   return rows[0];
 });
 
 app.patch('/walks/:id', async (req) => {
-  const { id } = req.params as { id: string };
+  const { id } = req.params as { id: number };
   const { stress_score } = req.body as { stress_score?: number };
 
   await pool.query('UPDATE walks SET ended_at = NOW(), stress_score = $2 WHERE id = $1', [id, stress_score ?? null]);
@@ -79,7 +85,7 @@ app.patch('/walks/:id', async (req) => {
 });
 
 app.post('/walks/:id/points', async (req, reply) => {
-  const { id } = req.params as { id: string };
+  const { id } = req.params as { id: number };
   const { lat, lng, recorded_at } = req.body as { lat: number; lng: number; recorded_at?: string };
 
   const { rows } = await pool.query(
@@ -126,7 +132,7 @@ app.post('/stressor-events', async (req, reply) => {
 });
 
 app.get('/stressor-events', async (req) => {
-  const { dog_id } = req.query as { dog_id?: string };
+  const { dog_id } = req.query as { dog_id?: number };
   const { rows } = await pool.query(
     dog_id
       ? 'SELECT * FROM stressor_events WHERE dog_id = $1 ORDER BY occurred_at DESC'
