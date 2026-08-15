@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "deploy": "docker compose -f docker-compose.prod.yml up -d --build"
+    "deploy:web": "docker compose -f docker-compose.prod.yml up -d --build web",
+    "deploy:api": "docker compose -f docker-compose.prod.yml up -d --build api",
+    "deploy": "docker compose -f docker-compose.prod.yml up -d --build api web",
+    "deploy:status": "docker compose -f docker-compose.prod.yml ps"
   }
 }
