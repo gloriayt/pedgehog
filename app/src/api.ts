@@ -36,6 +36,10 @@ export function endWalk(walkId: number, stressScore?: number): Promise<Walk> {
 	});
 }
 
+export function getWalks() {
+	return request<Walk[]>("/walks");
+}
+
 // ------- walk gps points
 export function logPoint(
 	walkId: number,

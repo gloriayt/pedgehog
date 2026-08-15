@@ -135,14 +135,15 @@ body {
 .ds-screen-bottom {
 	background: var(--ds-cream);
 	border-radius: 7px;
-	min-height: 192px;
+	height: 240px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 30px;
+	gap: 16px;
 	padding: 16px;
 	position: relative;
+	overflow-y: auto;
 }
 
 /* dotted touch grid */
@@ -392,8 +393,8 @@ body {
 }
 
 .ds-icon-xs {
-	width: 14px;
-	height: 14px;
+	width: 10px;
+	height: 10px;
 }
 
 /* ===== WALK WADDLE ===== */
@@ -534,6 +535,49 @@ body {
 	box-shadow: 0 1px 0 var(--ds-btn-pink-dark);
 }
 
+.ds-btn-secondary {
+	background: var(--ds-panel);
+	border-color: var(--ds-panel-border);
+	color: var(--ds-text);
+	box-shadow:
+		0 3px 0 var(--ds-panel-border),
+		inset 0 1px 0 #fff;
+}
+
+.ds-btn-secondary:active:not(:disabled) {
+	box-shadow: 0 1px 0 var(--ds-panel-border);
+}
+
+.ds-btn-sm {
+	font-family: inherit;
+	font-size: 9px;
+	font-weight: 700;
+	background: var(--ds-panel);
+	border: 2px solid var(--ds-panel-border);
+	border-radius: 4px;
+	padding: 4px 10px;
+	cursor: pointer;
+	color: var(--ds-text-light);
+	letter-spacing: 0.5px;
+	position: relative;
+	z-index: 1;
+	box-shadow:
+		0 2px 0 var(--ds-panel-border),
+		inset 0 1px 0 #fff;
+}
+
+.ds-btn-sm:active {
+	transform: translateY(2px);
+	box-shadow: none;
+}
+
+.ds-btn-row {
+	display: flex;
+	gap: 8px;
+	z-index: 1;
+	position: relative;
+}
+
 .ds-stat {
 	background: var(--ds-panel);
 	border: 1px solid var(--ds-panel-border);
@@ -556,6 +600,50 @@ body {
 	text-transform: uppercase;
 	letter-spacing: 1px;
 	margin-top: 2px;
+}
+
+/* ===== WALKS LIST ===== */
+
+.ds-walks-list {
+	width: 100%;
+	max-height: 180px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	position: relative;
+	z-index: 1;
+}
+
+.ds-walk-row {
+	background: var(--ds-panel);
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 6px;
+	padding: 8px 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.ds-walk-date {
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--ds-text);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.ds-walk-details {
+	font-size: 9px;
+	color: var(--ds-text-light);
+}
+
+.ds-walk-suburb {
+	font-size: 8px;
+	color: var(--ds-text-light);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
 /* ===== ERROR ===== */

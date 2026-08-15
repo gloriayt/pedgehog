@@ -4,9 +4,11 @@ import { startWalk } from "./api";
 import pawImg from "./assets/icon-paw.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import DsShell from "./DsShell";
+import WalksList from "./WalksList";
 
 function App() {
 	const [activeWalkId, setActiveWalkId] = useState<number | null>(null);
+	const [showWalks, setShowWalks] = useState(false);
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -30,21 +32,36 @@ function App() {
 		);
 	}
 
+	if (showWalks) {
+		return <WalksList onBack={() => setShowWalks(false)} />;
+	}
+
 	return (
 		<DsShell
 			sprite={idleImg}
 			bottom={
 				<>
-					<div className="ds-speech">Ready for walkies!</div>
-					<button
-						type="button"
-						className="ds-btn ds-btn-go"
-						onClick={handleStart}
-						disabled={pending}
-					>
+					<div className="ds-speech">
+						Ready for walkies!
 						<img className="ds-icon ds-icon-xs" src={pawImg} alt="" />
-						{pending ? "WAIT..." : "START"}
-					</button>
+					</div>
+					<div className="ds-btn-row">
+						<button
+							type="button"
+							className="ds-btn ds-btn-go"
+							onClick={handleStart}
+							disabled={pending}
+						>
+							{pending ? "WAIT..." : "START"}
+						</button>
+						<button
+							type="button"
+							className="ds-btn ds-btn-secondary"
+							onClick={() => setShowWalks(true)}
+						>
+							WALKS
+						</button>
+					</div>
 
 					{error && <div className="ds-error">{error}</div>}
 				</>
