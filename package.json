@@ -1,5 +1,8 @@
 {
   "name": "pedgehog",
   "version": "1.0.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "deploy": "docker compose -f docker-compose.prod.yml up -d --build"
+  }
 }
