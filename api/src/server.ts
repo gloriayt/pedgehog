@@ -2,8 +2,8 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import "dotenv/config";
 import dogs from "./routes/dogs.js";
-import walks from "./routes/walks.js";
 import stressors from "./routes/stressors.js";
+import walks from "./routes/walks.js";
 
 const app = Fastify({ logger: true });
 

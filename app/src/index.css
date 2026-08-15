@@ -139,9 +139,9 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	gap: 16px;
-	padding: 16px;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 14px;
 	position: relative;
 	overflow-y: auto;
 }
@@ -553,9 +553,9 @@ body {
 	font-size: 9px;
 	font-weight: 700;
 	background: var(--ds-panel);
-	border: 2px solid var(--ds-panel-border);
+	border: 1px solid var(--ds-panel-border);
 	border-radius: 4px;
-	padding: 4px 10px;
+	padding: 5px 10px;
 	cursor: pointer;
 	color: var(--ds-text-light);
 	letter-spacing: 0.5px;
@@ -602,11 +602,37 @@ body {
 	margin-top: 2px;
 }
 
+.ds-walks-header {
+	display: flex;
+	align-items: stretch;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	z-index: 1;
+	position: relative;
+}
+
+.ds-walks-header .ds-speech {
+	white-space: nowrap;
+}
+
+.ds-stats-inline {
+	font-size: 8px;
+	color: var(--ds-text-light);
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 8px;
+	padding: 0 10px;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+}
+
 /* ===== WALKS LIST ===== */
 
 .ds-walks-list {
 	width: 100%;
-	max-height: 180px;
+	flex: 1;
+	min-height: 0;
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
@@ -619,31 +645,64 @@ body {
 	background: var(--ds-panel);
 	border: 1px solid var(--ds-panel-border);
 	border-radius: 6px;
-	padding: 8px 10px;
+	padding: 6px 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+}
+
+.ds-walk-left {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 1px;
+}
+
+.ds-walk-duration {
+	font-size: 8px;
+	color: var(--ds-text-light);
+	white-space: nowrap;
+}
+
+.ds-walk-row:active {
+	opacity: 0.7;
+}
+
+.ds-walk-row-selected {
+	border-color: var(--ds-text);
 }
 
 .ds-walk-date {
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 400;
 	color: var(--ds-text);
 	display: flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.ds-walk-details {
+.ds-walk-suburb {
 	font-size: 9px;
 	color: var(--ds-text-light);
-}
-
-.ds-walk-suburb {
 	font-size: 8px;
-	color: var(--ds-text-light);
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
+}
+
+/* ===== MAP ===== */
+
+.ds-map-container {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	z-index: 1;
+}
+
+.ds-map-container .leaflet-container {
+	border-radius: inherit;
 }
 
 /* ===== ERROR ===== */

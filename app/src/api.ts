@@ -40,6 +40,12 @@ export function getWalks() {
 	return request<Walk[]>("/walks");
 }
 
+export function getWalkRoute(walkId: number) {
+	return request<{ type: string; coordinates: [number, number][] }>(
+		`/walks/${walkId}/geojson`,
+	);
+}
+
 // ------- walk gps points
 export function logPoint(
 	walkId: number,

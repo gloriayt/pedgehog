@@ -1,8 +1,14 @@
 import type { Walk } from "@pedgehog/shared";
-import { format, formatDuration, intervalToDuration } from "date-fns";
+import {
+	differenceInMinutes,
+	format,
+	formatDuration,
+	intervalToDuration,
+} from "date-fns";
 import { useEffect, useState } from "react";
-import { getWalks } from "./api";
-import pawImg from "./assets/icon-paw.webp";
+import { MapContainer, Polyline, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { getWalkRoute, getWalks } from "./api";
 import idleImg from "./assets/pretzel-idle.webp";
 import DsShell from "./DsShell";
 
@@ -10,6 +16,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const [walks, setWalks] = useState<Walk[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [selectedId, setSelectedId] = useState<number | null>(null);
+	const [positions, setPositions] = useState<[number, number][] | null>(null);
+	const [mapError, setMapError] = useState<string | null>(null);
 
 	useEffect(() => {
 		getWalks()
@@ -18,12 +27,79 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			.finally(() => setLoading(false));
 	}, []);
 
+	const selectWalk = (id: number) => {
+		if (selectedId === id) {
+			setSelectedId(null);
+			setPositions(null);
+			setMapError(null);
+			return;
+		}
+		setSelectedId(id);
+		setPositions(null);
+		setMapError(null);
+		getWalkRoute(id)
+			.then((geojson) => {
+				setPositions(geojson.coordinates.map(([lng, lat]) => [lat, lng]));
+			})
+			.catch(() => setMapError("No route recorded"));
+	};
+
+	const totalDistance = walks.reduce((sum, w) => sum + (w.distance ?? 0), 0);
+	const totalMinutes = walks.reduce((sum, w) => {
+		if (!w.ended_at) return sum;
+		return sum + differenceInMinutes(new Date(w.ended_at), new Date(w.started_at));
+	}, 0);
+	const totalTime = totalMinutes < 1 && totalMinutes > 0
+		? "< 1 min"
+		: formatDuration(
+				intervalToDuration({ start: 0, end: totalMinutes * 60 * 1000 }),
+				{ format: ["hours", "minutes"] },
+			) || "0 min";
+
+	let topContent: React.ReactNode;
+	if (selectedId && positions) {
+		topContent = (
+			<div className="ds-map-container">
+				<MapContainer
+					key={selectedId}
+					bounds={positions}
+					style={{ height: "100%", width: "100%", borderRadius: "inherit" }}
+				>
+					<TileLayer
+						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						attribution="&copy; OSM"
+					/>
+					<Polyline positions={positions} color="#0F6E56" weight={3} />
+				</MapContainer>
+			</div>
+		);
+	} else if (selectedId) {
+		topContent = <div className="ds-speech">{mapError ?? "Loading map..."}</div>;
+	} else {
+		topContent = <div className="ds-speech">Select a walk</div>;
+	}
+
 	return (
 		<DsShell
 			sprite={idleImg}
+			top={topContent}
 			bottom={
 				<>
-					<div className="ds-speech">Past walks</div>
+					<div className="ds-walks-header">
+						<div className="ds-speech">
+							{selectedId ? "Walk route" : "Past walks"}
+						</div>
+						{!loading && walks.length > 0 && (
+							<div className="ds-stats-inline">
+								TOTAL{" "}
+								{totalDistance >= 1000
+									? `${(totalDistance / 1000).toFixed(1)}km`
+									: `${Math.round(totalDistance)}m`}
+								{" · "}
+								{totalTime}
+							</div>
+						)}
+					</div>
 
 					{loading && <div className="ds-speech">Loading...</div>}
 					{error && <div className="ds-error">{error}</div>}
@@ -41,17 +117,23 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								: "in progress";
 
 							return (
-								<div key={w.id} className="ds-walk-row">
-									<div className="ds-walk-date">
-										<img className="ds-icon ds-icon-xs" src={pawImg} alt="" />
-										{format(new Date(w.started_at), "EEE d MMM")}
+								<button
+									type="button"
+									key={w.id}
+									className={`ds-walk-row${selectedId === w.id ? " ds-walk-row-selected" : ""}`}
+									onClick={() => selectWalk(w.id)}
+								>
+									<div className="ds-walk-left">
+										<div className="ds-walk-date">
+											{format(new Date(w.started_at), "EEE d MMM, h:mm a")}
+										</div>
+										<div className="ds-walk-suburb">
+											{w.suburb ?? "Unknown"}
+											{w.distance ? ` · ${Math.round(w.distance)}m` : ""}
+										</div>
 									</div>
-									<div className="ds-walk-details">
-										{duration}
-										{w.distance ? ` · ${Math.round(w.distance)}m` : ""}
-									</div>
-									<div className="ds-walk-suburb">{w.suburb ?? "Unknown"}</div>
-								</div>
+									<div className="ds-walk-duration">{duration}</div>
+								</button>
 							);
 						})}
 					</div>

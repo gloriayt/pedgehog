@@ -124,4 +124,17 @@ export default async function walks(app: FastifyInstance) {
 		reply.code(201);
 		return rows[0];
 	});
+
+	app.get("/walks/:id/geojson", async (req, reply) => {
+		const { id } = req.params as { id: string };
+		const { rows } = await pool.query(
+			`SELECT ST_AsGeoJSON(route) AS geojson FROM walks WHERE id = $1`,
+			[id],
+		);
+		if (!rows[0]?.geojson) {
+			reply.code(404);
+			return { error: "No route available" };
+		}
+		return JSON.parse(rows[0].geojson);
+	});
 }

@@ -11,6 +11,7 @@ import happyImg from "./assets/pretzel-happy.webp";
 type Props = {
 	sprite: string;
 	walking?: boolean;
+	top?: ReactNode;
 	bottom: ReactNode;
 };
 
@@ -20,7 +21,7 @@ function randomAround(center: number, range: number) {
 	return center + (Math.random() - 0.5) * range;
 }
 
-function DsShell({ sprite, walking, bottom }: Props) {
+function DsShell({ sprite, walking, top, bottom }: Props) {
 	const [hearts, setHearts] = useState<Heart[]>([]);
 	const [happy, setHappy] = useState(false);
 	const heartIdRef = useRef(0);
@@ -60,32 +61,36 @@ function DsShell({ sprite, walking, bottom }: Props) {
 			<div className="ds-console-top">
 				<div className="ds-bezel-top">
 					<div className="ds-screen-top">
-						{hearts.map((h) => (
-							<div
-								key={h.id}
-								className="ds-heart-react"
-								style={{ top: `${h.top}%`, left: `${h.left}%` }}
-							>
-								<img src={heartImg} alt="" />
-							</div>
-						))}
-						{walking ? (
-							<div className="ds-speech">
-								<span className="ds-walk-dots">
-									<span className="ds-walk-dot" />
-									<span className="ds-walk-dot" />
-									<span className="ds-walk-dot" />
-								</span>
-								On a walk!
-							</div>
-						) : (
-							<div className="ds-title">PRETZEL</div>
+						{top || (
+							<>
+								{hearts.map((h) => (
+									<div
+										key={h.id}
+										className="ds-heart-react"
+										style={{ top: `${h.top}%`, left: `${h.left}%` }}
+									>
+										<img src={heartImg} alt="" />
+									</div>
+								))}
+								{walking ? (
+									<div className="ds-speech">
+										<span className="ds-walk-dots">
+											<span className="ds-walk-dot" />
+											<span className="ds-walk-dot" />
+											<span className="ds-walk-dot" />
+										</span>
+										On a walk!
+									</div>
+								) : (
+									<div className="ds-title">PRETZEL</div>
+								)}
+								<img
+									className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}`}
+									src={happy && !walking ? happyImg : sprite}
+									alt="Pretzel"
+								/>
+							</>
 						)}
-						<img
-							className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}`}
-							src={happy && !walking ? happyImg : sprite}
-							alt="Pretzel"
-						/>
 					</div>
 				</div>
 			</div>
