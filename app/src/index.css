@@ -48,7 +48,7 @@ body {
 }
 
 #root {
-	width: 320px;
+	width: 360px;
 	max-width: 100%;
 }
 
@@ -103,7 +103,7 @@ body {
 	background:
 		var(--ds-sky) url("./assets/park-bg.webp") center / cover no-repeat;
 	border-radius: 7px;
-	min-height: 220px;
+	height: 240px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
