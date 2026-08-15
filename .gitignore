@@ -146,6 +146,7 @@ vite.config.ts.timestamp-*
 .vite/
 
 *.sql
+!api/seeds/*.sql
 *.dump
 /api/data/
 /seed-data/
