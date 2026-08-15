@@ -27,6 +27,7 @@ COPY --from=build /repo/api/node_modules ./api/node_modules
 COPY --from=build /repo/shared/node_modules ./shared/node_modules
 COPY --from=build /repo/api/dist ./api/dist
 COPY --from=build /repo/api/package.json ./api/package.json
+COPY --from=build /repo/api/migrations ./api/migrations
 COPY --from=build /repo/shared/dist ./shared/dist
 COPY --from=build /repo/shared/package.json ./shared/package.json
 
