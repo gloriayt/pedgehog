@@ -1,5 +1,5 @@
 pedgehog.com, www.pedgehog.com {
-  handle /api/* {
+  handle_path /api/* {
     reverse_proxy api:3000
   }
   handle {
