@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ActiveWalk from "./ActiveWalk";
 import { startWalk } from "./api";
-import pawImg from "./assets/icon-paw.png";
-import idleImg from "./assets/pretzel-idle.png";
+import pawImg from "./assets/icon-paw.webp";
+import idleImg from "./assets/pretzel-idle.webp";
 import DsShell from "./DsShell";
 
 function App() {

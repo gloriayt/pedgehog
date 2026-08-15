@@ -1,8 +1,8 @@
 import { secondsToMilliseconds } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { endWalk, logPoint } from "./api";
-import homeImg from "./assets/icon-home.png";
-import walkImg from "./assets/pretzel-walk.png";
+import homeImg from "./assets/icon-home.webp";
+import walkImg from "./assets/pretzel-walk.webp";
 import DsShell from "./DsShell";
 
 type Props = { walkId: number; onEnd: () => void };

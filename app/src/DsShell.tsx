@@ -5,8 +5,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import heartImg from "./assets/heart.png";
-import happyImg from "./assets/pretzel-happy.png";
+import heartImg from "./assets/heart.webp";
+import happyImg from "./assets/pretzel-happy.webp";
 
 type Props = {
 	sprite: string;

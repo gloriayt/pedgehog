@@ -101,7 +101,7 @@ body {
 
 .ds-screen-top {
 	background:
-		var(--ds-sky) url("./assets/park-bg.png") center / cover no-repeat;
+		var(--ds-sky) url("./assets/park-bg.webp") center / cover no-repeat;
 	border-radius: 7px;
 	min-height: 220px;
 	display: flex;
