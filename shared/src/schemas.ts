@@ -15,6 +15,7 @@ export const WalkSchema = z.object({
 	ended_at: z.string().nullable(),
 	distance: z.number().nullable(),
 	stress_score: z.number().min(1).max(5).nullable(),
+	suburb: z.string().nullable(),
 });
 export type Walk = z.infer<typeof WalkSchema>;
 
