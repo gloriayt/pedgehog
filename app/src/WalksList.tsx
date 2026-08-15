@@ -10,7 +10,7 @@ import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getWalkRoute, getWalks } from "./api";
 import idleImg from "./assets/pretzel-idle.webp";
-import DsShell from "./DsShell";
+import DsShell, { Loader } from "./DsShell";
 
 function WalksList({ onBack }: { onBack: () => void }) {
 	const [walks, setWalks] = useState<Walk[]>([]);
@@ -28,20 +28,17 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	}, []);
 
 	const selectWalk = (id: number) => {
-		if (selectedId === id) {
-			setSelectedId(null);
-			setPositions(null);
-			setMapError(null);
-			return;
-		}
-		setSelectedId(id);
+		const deselect = selectedId === id;
+		setSelectedId(deselect ? null : id);
 		setPositions(null);
 		setMapError(null);
-		getWalkRoute(id)
-			.then((geojson) => {
-				setPositions(geojson.coordinates.map(([lng, lat]) => [lat, lng]));
-			})
-			.catch(() => setMapError("No route recorded"));
+		if (!deselect) {
+			getWalkRoute(id)
+				.then((geojson) => {
+					setPositions(geojson.coordinates.map(([lng, lat]) => [lat, lng]));
+				})
+				.catch(() => setMapError("No route recorded"));
+		}
 	};
 
 	const totalDistance = walks.reduce((sum, w) => sum + (w.distance ?? 0), 0);
@@ -83,13 +80,16 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		<DsShell
 			sprite={idleImg}
 			top={topContent}
+			listLayout
 			bottom={
 				<>
 					<div className="ds-walks-header">
 						<div className="ds-speech">
 							{selectedId ? "Walk route" : "Past walks"}
 						</div>
-						{!loading && walks.length > 0 && (
+						{loading ? (
+							<div className="ds-stats-inline"><Loader /></div>
+						) : walks.length > 0 ? (
 							<div className="ds-stats-inline">
 								TOTAL{" "}
 								{totalDistance >= 1000
@@ -98,10 +98,14 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								{" · "}
 								{totalTime}
 							</div>
-						)}
+						) : null}
 					</div>
 
-					{loading && <div className="ds-speech">Loading...</div>}
+					{loading && (
+						<div className="ds-speech">
+							<Loader />
+						</div>
+					)}
 					{error && <div className="ds-error">{error}</div>}
 
 					<div className="ds-walks-list">

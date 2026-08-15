@@ -13,6 +13,7 @@ type Props = {
 	walking?: boolean;
 	top?: ReactNode;
 	bottom: ReactNode;
+	listLayout?: boolean;
 };
 
 type Heart = { id: number; top: number; left: number };
@@ -21,7 +22,7 @@ function randomAround(center: number, range: number) {
 	return center + (Math.random() - 0.5) * range;
 }
 
-function DsShell({ sprite, walking, top, bottom }: Props) {
+function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
 	const [hearts, setHearts] = useState<Heart[]>([]);
 	const [happy, setHappy] = useState(false);
 	const heartIdRef = useRef(0);
@@ -74,12 +75,7 @@ function DsShell({ sprite, walking, top, bottom }: Props) {
 								))}
 								{walking ? (
 									<div className="ds-speech">
-										<span className="ds-walk-dots">
-											<span className="ds-walk-dot" />
-											<span className="ds-walk-dot" />
-											<span className="ds-walk-dot" />
-										</span>
-										On a walk!
+										<Loader /> On a walk!
 									</div>
 								) : (
 									<div className="ds-title">PRETZEL</div>
@@ -104,7 +100,7 @@ function DsShell({ sprite, walking, top, bottom }: Props) {
 
 			<div className="ds-console-bottom">
 				<div className="ds-bezel-bottom">
-					<div className="ds-screen-bottom">{bottom}</div>
+					<div className={`ds-screen-bottom${listLayout ? " ds-layout-list" : ""}`}>{bottom}</div>
 				</div>
 
 				<div className="ds-controls">
@@ -154,6 +150,16 @@ function DsShell({ sprite, walking, top, bottom }: Props) {
 				</div>
 			</div>
 		</>
+	);
+}
+
+export function Loader() {
+	return (
+		<span className="ds-walk-dots">
+			<span className="ds-walk-dot" />
+			<span className="ds-walk-dot" />
+			<span className="ds-walk-dot" />
+		</span>
 	);
 }
 
