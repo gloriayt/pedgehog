@@ -1,11 +1,14 @@
 {
-  "name": "pedgehog",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "deploy:web": "docker compose -f docker-compose.prod.yml up -d --build web",
-    "deploy:api": "docker compose -f docker-compose.prod.yml up -d --build api",
-    "deploy": "docker compose -f docker-compose.prod.yml up -d --build api web",
-    "deploy:status": "docker compose -f docker-compose.prod.yml ps"
-  }
+	"name": "pedgehog",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"deploy:web": "docker compose -f docker-compose.prod.yml up -d --build web",
+		"deploy:api": "docker compose -f docker-compose.prod.yml up -d --build api",
+		"deploy": "docker compose -f docker-compose.prod.yml up -d --build api web",
+		"deploy:status": "docker compose -f docker-compose.prod.yml ps"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.4"
+	}
 }

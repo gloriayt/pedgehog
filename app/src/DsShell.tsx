@@ -57,97 +57,97 @@ function DsShell({ sprite, walking, bottom }: Props) {
 
 	return (
 		<>
-		<div className="ds-console-top">
-			<div className="ds-bezel-top">
-				<div className="ds-screen-top">
-					{hearts.map((h) => (
-						<div
-							key={h.id}
-							className="ds-heart-react"
-							style={{ top: `${h.top}%`, left: `${h.left}%` }}
-						>
-							<img src={heartImg} alt="" />
-						</div>
-					))}
-					{walking ? (
-						<div className="ds-speech">
-							<span className="ds-walk-dots">
-								<span className="ds-walk-dot" />
-								<span className="ds-walk-dot" />
-								<span className="ds-walk-dot" />
-							</span>
-							On a walk!
-						</div>
-					) : (
-						<div className="ds-title">PRETZEL</div>
-					)}
-					<img
-						className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}`}
-						src={happy && !walking ? happyImg : sprite}
-						alt="Pretzel"
-					/>
-				</div>
-			</div>
-		</div>
-
-		<div className="ds-hinge">
-			<div className="ds-power">
-				<div className="ds-power-led" />
-				<div className="ds-power-led" />
-			</div>
-		</div>
-
-		<div className="ds-console-bottom">
-			<div className="ds-bezel-bottom">
-				<div className="ds-screen-bottom">{bottom}</div>
-			</div>
-
-			<div className="ds-controls">
-				<div className="ds-dpad-wrap">
-					<div className="ds-dpad">
-						<button
-							type="button"
-							className="ds-dpad-btn ds-dpad-up"
-							aria-label="D-pad up"
-							onClick={pet}
-						/>
-						<button
-							type="button"
-							className="ds-dpad-btn ds-dpad-down"
-							aria-label="D-pad down"
-							onClick={pet}
-						/>
-						<button
-							type="button"
-							className="ds-dpad-btn ds-dpad-left"
-							aria-label="D-pad left"
-							onClick={pet}
-						/>
-						<button
-							type="button"
-							className="ds-dpad-btn ds-dpad-right"
-							aria-label="D-pad right"
-							onClick={pet}
+			<div className="ds-console-top">
+				<div className="ds-bezel-top">
+					<div className="ds-screen-top">
+						{hearts.map((h) => (
+							<div
+								key={h.id}
+								className="ds-heart-react"
+								style={{ top: `${h.top}%`, left: `${h.left}%` }}
+							>
+								<img src={heartImg} alt="" />
+							</div>
+						))}
+						{walking ? (
+							<div className="ds-speech">
+								<span className="ds-walk-dots">
+									<span className="ds-walk-dot" />
+									<span className="ds-walk-dot" />
+									<span className="ds-walk-dot" />
+								</span>
+								On a walk!
+							</div>
+						) : (
+							<div className="ds-title">PRETZEL</div>
+						)}
+						<img
+							className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}`}
+							src={happy && !walking ? happyImg : sprite}
+							alt="Pretzel"
 						/>
 					</div>
 				</div>
+			</div>
 
-				<div className="ds-face-btns">
-					<button type="button" className="ds-face-btn" onClick={pet}>
-						X
-					</button>
-					<button type="button" className="ds-face-btn" onClick={pet}>
-						B
-					</button>
-					<button type="button" className="ds-face-btn" onClick={pet}>
-						Y
-					</button>
-					<button type="button" className="ds-face-btn" onClick={pet}>
-						A
-					</button>
+			<div className="ds-hinge">
+				<div className="ds-power">
+					<div className="ds-power-led" />
+					<div className="ds-power-led" />
 				</div>
 			</div>
-		</div>
+
+			<div className="ds-console-bottom">
+				<div className="ds-bezel-bottom">
+					<div className="ds-screen-bottom">{bottom}</div>
+				</div>
+
+				<div className="ds-controls">
+					<div className="ds-dpad-wrap">
+						<div className="ds-dpad">
+							<button
+								type="button"
+								className="ds-dpad-btn ds-dpad-up"
+								aria-label="D-pad up"
+								onClick={pet}
+							/>
+							<button
+								type="button"
+								className="ds-dpad-btn ds-dpad-down"
+								aria-label="D-pad down"
+								onClick={pet}
+							/>
+							<button
+								type="button"
+								className="ds-dpad-btn ds-dpad-left"
+								aria-label="D-pad left"
+								onClick={pet}
+							/>
+							<button
+								type="button"
+								className="ds-dpad-btn ds-dpad-right"
+								aria-label="D-pad right"
+								onClick={pet}
+							/>
+						</div>
+					</div>
+
+					<div className="ds-face-btns">
+						<button type="button" className="ds-face-btn" onClick={pet}>
+							X
+						</button>
+						<button type="button" className="ds-face-btn" onClick={pet}>
+							B
+						</button>
+						<button type="button" className="ds-face-btn" onClick={pet}>
+							Y
+						</button>
+						<button type="button" className="ds-face-btn" onClick={pet}>
+							A
+						</button>
+					</div>
+				</div>
+			</div>
 		</>
 	);
 }

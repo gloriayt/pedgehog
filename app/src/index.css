@@ -164,12 +164,7 @@ body {
 
 .ds-hinge {
 	height: 18px;
-	background: linear-gradient(
-		180deg,
-		#8abfd6,
-		#a8d4e8 50%,
-		#8abfd6
-	);
+	background: linear-gradient(180deg, #8abfd6, #a8d4e8 50%, #8abfd6);
 	border: 1px solid var(--ds-border);
 	border-radius: 6px;
 	margin: 0 4px;
@@ -205,10 +200,8 @@ body {
 }
 
 .ds-dpad-wrap {
-	filter:
-		drop-shadow(1px 0 0 var(--ds-border))
-		drop-shadow(-1px 0 0 var(--ds-border))
-		drop-shadow(0 1px 0 var(--ds-border))
+	filter: drop-shadow(1px 0 0 var(--ds-border))
+		drop-shadow(-1px 0 0 var(--ds-border)) drop-shadow(0 1px 0 var(--ds-border))
 		drop-shadow(0 -1px 0 var(--ds-border))
 		drop-shadow(0 1.5px 0 var(--ds-hw-shadow))
 		drop-shadow(0 1px 0 var(--ds-border));
@@ -222,9 +215,18 @@ body {
 	background: linear-gradient(180deg, var(--ds-hw), var(--ds-hw-dark));
 	border-radius: 4px;
 	clip-path: polygon(
-		33% 0%, 67% 0%, 67% 33%, 100% 33%,
-		100% 67%, 67% 67%, 67% 100%, 33% 100%,
-		33% 67%, 0% 67%, 0% 33%, 33% 33%
+		33% 0%,
+		67% 0%,
+		67% 33%,
+		100% 33%,
+		100% 67%,
+		67% 67%,
+		67% 100%,
+		33% 100%,
+		33% 67%,
+		0% 67%,
+		0% 33%,
+		33% 33%
 	);
 }
 
@@ -242,19 +244,41 @@ body {
 
 /* each button covers its arm + half the centre, clipped to a triangle in the centre */
 .ds-dpad-up,
-.ds-dpad-down { left: 33%; width: 34%; }
-.ds-dpad-up    { top: 0; height: 50%; clip-path: polygon(0% 0%, 100% 0%, 100% 65%, 50% 105%, 0% 65%); }
-.ds-dpad-down  { bottom: 0; height: 50%; clip-path: polygon(50% -5%, 100% 35%, 100% 100%, 0% 100%, 0% 35%); }
+.ds-dpad-down {
+	left: 33%;
+	width: 34%;
+}
+.ds-dpad-up {
+	top: 0;
+	height: 50%;
+	clip-path: polygon(0% 0%, 100% 0%, 100% 65%, 50% 105%, 0% 65%);
+}
+.ds-dpad-down {
+	bottom: 0;
+	height: 50%;
+	clip-path: polygon(50% -5%, 100% 35%, 100% 100%, 0% 100%, 0% 35%);
+}
 
 .ds-dpad-left,
-.ds-dpad-right { top: 0; height: 100%; }
-.ds-dpad-left  { left: 0; width: 50%; clip-path: polygon(0% 33%, 65% 33%, 105% 50%, 65% 67%, 0% 67%); }
-.ds-dpad-right { right: 0; width: 50%; clip-path: polygon(-5% 50%, 35% 33%, 100% 33%, 100% 67%, 35% 67%); }
+.ds-dpad-right {
+	top: 0;
+	height: 100%;
+}
+.ds-dpad-left {
+	left: 0;
+	width: 50%;
+	clip-path: polygon(0% 33%, 65% 33%, 105% 50%, 65% 67%, 0% 67%);
+}
+.ds-dpad-right {
+	right: 0;
+	width: 50%;
+	clip-path: polygon(-5% 50%, 35% 33%, 100% 33%, 100% 67%, 35% 67%);
+}
 
 /* ridge lines on parent (above clipped buttons) */
 .ds-dpad::before,
 .ds-dpad::after {
-	content: '';
+	content: "";
 	position: absolute;
 	background: var(--ds-hw-accent);
 	z-index: 1;
@@ -295,7 +319,9 @@ body {
 	border: none;
 	outline: 1px solid var(--ds-border);
 	outline-offset: -1px;
-	box-shadow: 0 1px 0 var(--ds-hw-shadow), 0 2px 0 var(--ds-border);
+	box-shadow:
+		0 1px 0 var(--ds-hw-shadow),
+		0 2px 0 var(--ds-border);
 	cursor: pointer;
 	padding: 0;
 	font-family: inherit;
@@ -313,19 +339,37 @@ body {
 }
 
 .ds-face-btn:nth-child(1):active,
-.ds-face-btn:nth-child(2):active { translate: -50% 2px; }
+.ds-face-btn:nth-child(2):active {
+	translate: -50% 2px;
+}
 .ds-face-btn:nth-child(3):active,
-.ds-face-btn:nth-child(4):active { translate: 0 calc(-50% + 2px); }
+.ds-face-btn:nth-child(4):active {
+	translate: 0 calc(-50% + 2px);
+}
 
 .ds-face-btn:nth-child(1),
-.ds-face-btn:nth-child(2) { left: 50%; translate: -50% 0; }
-.ds-face-btn:nth-child(1) { top: 0; }    /* X */
-.ds-face-btn:nth-child(2) { bottom: 0; } /* B */
+.ds-face-btn:nth-child(2) {
+	left: 50%;
+	translate: -50% 0;
+}
+.ds-face-btn:nth-child(1) {
+	top: 0;
+} /* X */
+.ds-face-btn:nth-child(2) {
+	bottom: 0;
+} /* B */
 
 .ds-face-btn:nth-child(3),
-.ds-face-btn:nth-child(4) { top: 50%; translate: 0 -50%; }
-.ds-face-btn:nth-child(3) { left: 0; }   /* Y */
-.ds-face-btn:nth-child(4) { right: 0; }  /* A */
+.ds-face-btn:nth-child(4) {
+	top: 50%;
+	translate: 0 -50%;
+}
+.ds-face-btn:nth-child(3) {
+	left: 0;
+} /* Y */
+.ds-face-btn:nth-child(4) {
+	right: 0;
+} /* A */
 
 /* ===== SPRITES (individual images) ===== */
 
@@ -469,7 +513,9 @@ body {
 .ds-btn-go {
 	background: var(--ds-btn-green);
 	border-color: var(--ds-btn-green-dark);
-	box-shadow: 0 3px 0 var(--ds-btn-green-dark), inset 0 1px 0 #fff;
+	box-shadow:
+		0 3px 0 var(--ds-btn-green-dark),
+		inset 0 1px 0 #fff;
 }
 
 .ds-btn-go:active:not(:disabled) {
@@ -479,7 +525,9 @@ body {
 .ds-btn-stop {
 	background: var(--ds-btn-pink);
 	border-color: var(--ds-btn-pink-dark);
-	box-shadow: 0 3px 0 var(--ds-btn-pink-dark), inset 0 1px 0 #fff;
+	box-shadow:
+		0 3px 0 var(--ds-btn-pink-dark),
+		inset 0 1px 0 #fff;
 }
 
 .ds-btn-stop:active:not(:disabled) {

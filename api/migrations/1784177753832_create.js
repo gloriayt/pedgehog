@@ -8,9 +8,9 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createExtension('postgis', { ifNotExists: true });
+	pgm.createExtension("postgis", { ifNotExists: true });
 
-  pgm.sql(`
+	pgm.sql(`
     CREATE TABLE dog_profiles (
       id serial PRIMARY KEY,
       name text NOT NULL,
@@ -72,7 +72,7 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.sql(`
+	pgm.sql(`
     DROP TABLE stressor_events;
     DROP TABLE stressor_types;
     DROP TABLE walks;
