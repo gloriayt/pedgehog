@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: pedgehog-db
     image: postgis/postgis:16-3.4
     restart: unless-stopped
     environment:
@@ -10,6 +11,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   api:
+    container_name: pedgehog-api
     build:
       context: .
       dockerfile: api/Dockerfile
@@ -20,6 +22,7 @@ services:
       - db
 
   web:
+    container_name: pedgehog-web
     build:
       context: .
       dockerfile: web.Dockerfile
