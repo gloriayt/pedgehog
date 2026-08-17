@@ -8,7 +8,8 @@
 		"lint": "biome check --write .",
 		"build": "tsc",
 		"start": "node dist/server.js",
-		"migrate": "node-pg-migrate up"
+		"migrate": "node-pg-migrate up",
+		"cleanup": "tsx src/cleanup.ts"
 	},
 	"keywords": [],
 	"author": "",
