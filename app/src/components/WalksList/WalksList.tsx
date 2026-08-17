@@ -15,7 +15,7 @@ import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
 import WalkMap, { ROUTE_COLOURS, type Route as MapRoute } from "./WalkMap";
 import WalkRow from "./WalkRow";
-import { FILTER_LABELS, type WalkFilter } from "./walksListFilter";
+import { FILTER_EMPTY, FILTER_LABELS, type WalkFilter } from "./walksListFilter";
 
 type CachedRoute = { positions: [number, number][] };
 
@@ -189,6 +189,11 @@ function WalksList({ onBack }: { onBack: () => void }) {
 					{error && <div className="ds-error">{error}</div>}
 
 					<div className="ds-walks-list">
+						{!loading && filteredWalks.length === 0 && (
+							<div className="ds-empty">
+								<div className="ds-speech">{FILTER_EMPTY[filter]}</div>
+							</div>
+						)}
 						{filteredWalks.map((w) => (
 							<WalkRow
 								key={w.id}

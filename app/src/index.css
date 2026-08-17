@@ -773,6 +773,13 @@ body {
 
 /* ===== WALKS LIST ===== */
 
+.ds-empty {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .ds-walks-list {
 	width: 100%;
 	flex: 1;
@@ -934,12 +941,13 @@ body {
 .ds-select-sm {
 	width: auto;
 	font-size: 8px;
-	padding: 6px 4px;
+	padding: 5px 6px;
+	height: 100%;
 }
 
 .ds-header-actions {
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	gap: 6px;
 }
 
@@ -1087,12 +1095,16 @@ body {
 	.ds-dpad {
 		width: 44px;
 		height: 44px;
+		margin-top: 4px;
+		margin-bottom: -4px;
 	}
 
 	.ds-face-btns {
 		width: 54px;
 		height: 54px;
-		margin-top: 4px;
+		margin-top: 0px;
+		margin-right: -8px;
+		margin-bottom: -10px;
 	}
 
 	.ds-face-btn {

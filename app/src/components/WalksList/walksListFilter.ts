@@ -21,6 +21,14 @@ export const FILTER_LABELS: Record<WalkFilter, string> = {
 	all: "All time",
 };
 
+export const FILTER_EMPTY: Record<WalkFilter, string> = {
+	today: "No walks today yet!",
+	this_week: "No walks this week yet!",
+	last_week: "No walks last week!",
+	this_month: "No walks this month yet!",
+	all: "No walks yet!",
+};
+
 const WEEK_OPTS = { weekStartsOn: 1 as const };
 
 export function getFilterRange(filter: WalkFilter): { start: Date; end: Date } {
