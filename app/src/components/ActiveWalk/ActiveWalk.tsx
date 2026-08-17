@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import {
 	deleteStressorEvent,
+	deleteWalk,
 	endWalk,
 	getStressorEvents,
 	logPoint,
 	type StressorEvent,
 } from "../../api";
+import binImg from "../../assets/bin.webp";
 import homeImg from "../../assets/icon-home.webp";
 import walkImg from "../../assets/pretzel-walk.webp";
 import { haversine } from "../../helpers";
 import DsShell from "../DsShell";
 import Loader from "../Loader";
+import Popup from "../Popup";
 import ActiveWalkEventsList from "./ActiveWalkEventsList";
 import AddEventForm from "./AddEventForm";
 
@@ -28,6 +31,8 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [showForm, setShowForm] = useState(false);
 	const [editingEvent, setEditingEvent] = useState<StressorEvent | null>(null);
 	const [showEndConfirm, setShowEndConfirm] = useState(false);
+	const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+	const [deleteEventId, setDeleteEventId] = useState<number | null>(null);
 	const [events, setEvents] = useState<StressorEvent[]>([]);
 	const lastSentRef = useRef(0);
 	const lastPosRef = useRef<{ lat: number; lng: number } | null>(null);
@@ -69,12 +74,10 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	}, [walkId]);
 
 	const refreshEvents = () => {
-		getStressorEvents(walkId)
-			.then(setEvents)
-			.catch(() => {});
+		getStressorEvents(walkId).then(setEvents).catch(() => {});
 	};
 
-	const handleDelete = async (id: number) => {
+	const handleDeleteEvent = async (id: number) => {
 		await deleteStressorEvent(id);
 		refreshEvents();
 	};
@@ -87,6 +90,15 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 		} catch (e) {
 			setGpsError(`End failed: ${(e as Error).message}`);
 			setEnding(false);
+		}
+	};
+
+	const handleCancel = async () => {
+		try {
+			await deleteWalk(walkId);
+			onEnd();
+		} catch (e) {
+			setGpsError(`Cancel failed: ${(e as Error).message}`);
 		}
 	};
 
@@ -111,7 +123,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</div>
 						<button
 							type="button"
-							className="ds-btn ds-btn-stop ds-btn-compact"
+							className="ds-btn ds-btn-go ds-btn-compact"
 							onClick={() => setShowEndConfirm(true)}
 							disabled={ending}
 						>
@@ -121,10 +133,17 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 								<img
 									className="ds-icon"
 									src={homeImg}
-									alt="Finish"
+									alt="Save"
 									style={{ width: 20, height: 20 }}
 								/>
 							)}
+						</button>
+						<button
+							type="button"
+							className="ds-btn ds-btn-stop ds-btn-compact"
+							onClick={() => setShowCancelConfirm(true)}
+						>
+							<img className="ds-icon" src={binImg} alt="Cancel" style={{ width: 20, height: 20 }} />
 						</button>
 					</div>
 
@@ -140,7 +159,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 							setEditingEvent(event);
 							setShowForm(true);
 						}}
-						onDelete={handleDelete}
+						onDelete={(id) => setDeleteEventId(id)}
 					/>
 
 					{showForm && (
@@ -161,30 +180,40 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 					)}
 
 					{showEndConfirm && (
-						<div className="ds-confirm-overlay">
-							<div className="ds-confirm">
-								<div className="ds-speech">End walk?</div>
-								<div className="ds-btn-row">
-									<button
-										type="button"
-										className="ds-btn-sm ds-btn-sm-stop"
-										onClick={() => {
-											setShowEndConfirm(false);
-											handleEnd();
-										}}
-									>
-										END
-									</button>
-									<button
-										type="button"
-										className="ds-btn-sm"
-										onClick={() => setShowEndConfirm(false)}
-									>
-										CANCEL
-									</button>
-								</div>
-							</div>
-						</div>
+						<Popup
+							message="Save walk?"
+							confirmLabel="yes pls!"
+							cancelLabel="not yet"
+							confirmStyle="ds-btn-sm ds-btn-sm-go"
+							onConfirm={() => {
+								setShowEndConfirm(false);
+								handleEnd();
+							}}
+							onCancel={() => setShowEndConfirm(false)}
+						/>
+					)}
+
+					{showCancelConfirm && (
+						<Popup
+							message="Cancel walk?"
+							onConfirm={() => {
+								setShowCancelConfirm(false);
+								handleCancel();
+							}}
+							onCancel={() => setShowCancelConfirm(false)}
+						/>
+					)}
+
+					{deleteEventId && (
+						<Popup
+							message="Delete event?"
+							confirmLabel="DELETE"
+							onConfirm={() => {
+								handleDeleteEvent(deleteEventId);
+								setDeleteEventId(null);
+							}}
+							onCancel={() => setDeleteEventId(null)}
+						/>
 					)}
 				</>
 			}
