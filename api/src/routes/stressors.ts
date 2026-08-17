@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "fastify";
 import { LogStressorEventInput } from "@pedgehog/shared";
+import type { FastifyInstance } from "fastify";
 import { pool } from "../db.js";
 
 export default async function stressors(app: FastifyInstance) {
@@ -54,12 +54,28 @@ export default async function stressors(app: FastifyInstance) {
 	});
 
 	app.get("/stressor-events", async (req) => {
-		const { dog_id } = req.query as { dog_id?: string };
+		const { dog_id, walk_id } = req.query as {
+			dog_id?: string;
+			walk_id?: string;
+		};
+		const conditions: string[] = [];
+		const params: string[] = [];
+		if (walk_id) {
+			params.push(walk_id);
+			conditions.push(`se.walk_id = $${params.length}`);
+		}
+		if (dog_id) {
+			params.push(dog_id);
+			conditions.push(`se.dog_id = $${params.length}`);
+		}
+		const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 		const { rows } = await pool.query(
-			dog_id
-				? "SELECT * FROM stressor_events WHERE dog_id = $1 ORDER BY occurred_at DESC"
-				: "SELECT * FROM stressor_events ORDER BY occurred_at DESC",
-			dog_id ? [dog_id] : [],
+			`SELECT se.*, st.label, st.category, st.direction, st.type,
+				ST_Y(se.location::geometry) AS lat, ST_X(se.location::geometry) AS lng
+			FROM stressor_events se
+			JOIN stressor_types st ON st.id = se.stressor_type_id
+			${where} ORDER BY se.occurred_at`,
+			params,
 		);
 		return rows;
 	});

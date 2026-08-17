@@ -6,9 +6,22 @@ import {
 	intervalToDuration,
 } from "date-fns";
 import { type ReactNode, useEffect, useState } from "react";
-import { MapContainer, Polyline, TileLayer } from "react-leaflet";
+import {
+	CircleMarker,
+	MapContainer,
+	Polyline,
+	TileLayer,
+	Tooltip,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { deleteWalk, getWalkRoute, getWalks } from "./api";
+import {
+	deleteWalk,
+	getAllStressorEvents,
+	getStressorEvents,
+	getWalkRoute,
+	getWalks,
+	type StressorEvent,
+} from "./api";
 import binImg from "./assets/bin.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import DsShell, { Loader } from "./DsShell";
@@ -21,12 +34,15 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const [positions, setPositions] = useState<[number, number][] | null>(null);
 	const [mapError, setMapError] = useState<string | null>(null);
 	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+	const [events, setEvents] = useState<StressorEvent[]>([]);
+	const [allEvents, setAllEvents] = useState<StressorEvent[]>([]);
 
 	useEffect(() => {
 		getWalks()
 			.then(setWalks)
 			.catch(() => setError("Could not load walks"))
 			.finally(() => setLoading(false));
+		getAllStressorEvents().then(setAllEvents).catch(() => {});
 	}, []);
 
 	const handleDelete = async (id: number) => {
@@ -48,12 +64,16 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		setSelectedId(deselect ? null : id);
 		setPositions(null);
 		setMapError(null);
+		setEvents([]);
 		if (!deselect) {
 			getWalkRoute(id)
 				.then((geojson) => {
 					setPositions(geojson.coordinates.map(([lng, lat]) => [lat, lng]));
 				})
 				.catch(() => setMapError("No route recorded"));
+			getStressorEvents(id)
+				.then(setEvents)
+				.catch(() => {});
 		}
 	};
 
@@ -86,6 +106,24 @@ function WalksList({ onBack }: { onBack: () => void }) {
 						attribution="&copy; OSM"
 					/>
 					<Polyline positions={positions} color="#0F6E56" weight={3} />
+					{events
+						.filter((e) => e.lat && e.lng)
+						.map((e) => (
+							<CircleMarker
+								key={e.id}
+								center={[e.lat!, e.lng!]}
+								radius={6}
+								color={e.direction < 0 ? "#e05050" : "#48a848"}
+								fillColor={e.direction < 0 ? "#e05050" : "#48a848"}
+								fillOpacity={0.8}
+								weight={2}
+							>
+								<Tooltip>
+									<div>{e.label}{e.intensity ? ` (${e.intensity}/5)` : ""}</div>
+									{e.notes && <div style={{ fontSize: 10, opacity: 0.7 }}>{e.notes}</div>}
+								</Tooltip>
+							</CircleMarker>
+						))}
 				</MapContainer>
 			</div>
 		);
@@ -147,7 +185,11 @@ function WalksList({ onBack }: { onBack: () => void }) {
 										.replace(/ minutes?/g, "min")
 								: "in progress";
 
-							return (
+							const walkEvents = allEvents.filter((e) => e.walk_id === w.id);
+								const dogs = walkEvents.filter((e) => e.type === "dog_encounter").length;
+								const cats = walkEvents.filter((e) => e.type === "cat_encounter").length;
+
+								return (
 								<button
 									type="button"
 									key={w.id}
@@ -157,6 +199,8 @@ function WalksList({ onBack }: { onBack: () => void }) {
 									<div className="ds-walk-left">
 										<div className="ds-walk-date">
 											{format(new Date(w.started_at), "EEE d MMM, h:mm a")}
+											{dogs > 0 && " " + "🐕".repeat(dogs)}
+											{cats > 0 && " " + "🐈".repeat(cats)}
 										</div>
 										<div className="ds-walk-suburb">
 											{w.suburb ?? "Unknown"}
@@ -166,14 +210,14 @@ function WalksList({ onBack }: { onBack: () => void }) {
 										</div>
 									</div>
 									<button
-											type="button"
-											className="ds-walk-delete"
-											onClick={(e) => {
-												e.stopPropagation();
-												setConfirmDeleteId(w.id);
-											}}
-										>
-											<img src={binImg} alt="Delete" />
+										type="button"
+										className="ds-walk-delete"
+										onClick={(e) => {
+											e.stopPropagation();
+											setConfirmDeleteId(w.id);
+										}}
+									>
+										<img src={binImg} alt="Delete" />
 									</button>
 								</button>
 							);

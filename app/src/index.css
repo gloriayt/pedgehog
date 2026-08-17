@@ -50,8 +50,16 @@ body {
 			#c8dae8 23px,
 			#c8dae8 24px
 		),
-		linear-gradient(90deg, transparent 39px, #e8a0a0 39px, #e8a0a0 40px, transparent 40px);
-	background-size: 100% 24px, 100% 100%;
+		linear-gradient(
+			90deg,
+			transparent 39px,
+			#e8a0a0 39px,
+			#e8a0a0 40px,
+			transparent 40px
+		);
+	background-size:
+		100% 24px,
+		100% 100%;
 	background-attachment: local;
 	padding: 12px;
 }
@@ -588,6 +596,12 @@ body {
 	box-shadow: none;
 }
 
+.ds-btn-sm-go {
+	background: var(--ds-btn-green);
+	border-color: var(--ds-btn-green-dark);
+	color: var(--ds-white);
+}
+
 .ds-btn-row {
 	display: flex;
 	gap: 12px;
@@ -768,6 +782,71 @@ body {
 	border-radius: inherit;
 }
 
+/* ===== LOG EVENT FORM ===== */
+
+.ds-log-form {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+}
+
+.ds-select {
+	font-family: inherit;
+	font-size: 10px;
+	padding: 6px 8px;
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 4px;
+	background: var(--ds-panel);
+	color: var(--ds-text);
+	width: 100%;
+}
+
+.ds-textarea {
+	font-family: inherit;
+	font-size: 10px;
+	padding: 6px 8px;
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 4px;
+	background: var(--ds-panel);
+	color: var(--ds-text);
+	width: 100%;
+	resize: none;
+}
+
+.ds-intensity {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-items: center;
+}
+
+.ds-intensity-btns {
+	display: flex;
+	gap: 4px;
+}
+
+.ds-intensity-btn {
+	font-family: inherit;
+	font-size: 10px;
+	width: 28px;
+	height: 28px;
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 4px;
+	background: var(--ds-panel);
+	color: var(--ds-text);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ds-intensity-active {
+	background: var(--ds-btn-green);
+	border-color: var(--ds-btn-green-dark);
+	color: var(--ds-white);
+}
+
 /* ===== CONFIRM DIALOG ===== */
 
 .ds-confirm-overlay {
@@ -782,10 +861,15 @@ body {
 }
 
 .ds-confirm {
+	background: var(--ds-cream);
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 10px;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 10px;
+	gap: 14px;
+	max-width: 90%;
 }
 
 /* ===== ERROR ===== */

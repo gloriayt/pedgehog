@@ -36,6 +36,22 @@ export const StressorTypeSchema = z.object({
 });
 export type StressorType = z.infer<typeof StressorTypeSchema>;
 
+export const StressorEventSchema = z.object({
+	id: z.number(),
+	dog_id: z.number(),
+	stressor_type_id: z.number(),
+	walk_id: z.number().nullable(),
+	intensity: z.number().nullable(),
+	lat: z.number().nullable(),
+	lng: z.number().nullable(),
+	label: z.string(),
+	category: z.string(),
+	direction: z.number(),
+	type: z.string(),
+	notes: z.string().nullable().optional(),
+});
+export type StressorEvent = z.infer<typeof StressorEventSchema>;
+
 export const LogStressorEventInput = z.object({
 	dog_id: z.number(),
 	stressor_type_id: z.number(),

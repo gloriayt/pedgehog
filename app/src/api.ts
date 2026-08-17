@@ -1,4 +1,6 @@
-import type { StressorType, Walk } from "@pedgehog/shared";
+import type { StressorEvent, StressorType, Walk } from "@pedgehog/shared";
+
+export type { StressorEvent };
 
 const API_URL = import.meta.env.VITE_API_URL;
 class ApiError extends Error {}
@@ -63,6 +65,14 @@ export function logPoint(
 		method: "POST",
 		body: JSON.stringify({ lat, lng }),
 	});
+}
+
+export function getStressorEvents(walkId: number) {
+	return request<StressorEvent[]>(`/stressor-events?walk_id=${walkId}`);
+}
+
+export function getAllStressorEvents(dogId = 1) {
+	return request<StressorEvent[]>(`/stressor-events?dog_id=${dogId}`);
 }
 
 export function getStressorTypes(): Promise<StressorType[]> {

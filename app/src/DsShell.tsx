@@ -100,7 +100,11 @@ function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
 
 			<div className="ds-console-bottom">
 				<div className="ds-bezel-bottom">
-					<div className={`ds-screen-bottom${listLayout ? " ds-layout-list" : ""}`}>{bottom}</div>
+					<div
+						className={`ds-screen-bottom${listLayout ? " ds-layout-list" : ""}`}
+					>
+						{bottom}
+					</div>
 				</div>
 
 				<div className="ds-controls">
