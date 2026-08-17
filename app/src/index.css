@@ -57,7 +57,7 @@ body {
 }
 
 #root {
-	width: 360px;
+	width: 540px;
 	max-width: 100%;
 }
 
@@ -462,7 +462,7 @@ body {
 /* ===== TYPOGRAPHY ===== */
 
 .ds-title {
-	font-size: 20px;
+	font-size: 28px;
 	font-weight: 700;
 	color: var(--ds-white);
 	text-shadow:
@@ -845,4 +845,46 @@ body {
 	height: 8px;
 	background: #48d848;
 	border-radius: 0.5px;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 430px) {
+	.ds-screen-top,
+	.ds-screen-bottom {
+		height: 310px;
+	}
+
+	.ds-controls {
+		padding: 8px 12px 6px;
+	}
+
+	.ds-dpad {
+		width: 44px;
+		height: 44px;
+	}
+
+	.ds-face-btns {
+		width: 54px;
+		height: 54px;
+	}
+
+	.ds-face-btn {
+		width: 18px;
+		height: 18px;
+		font-size: 7px;
+		padding: 0;
+	}
+
+	.ds-dpad::before {
+		box-shadow: 0 calc(44px - 18px) 0 var(--ds-hw-accent);
+	}
+
+	.ds-dpad::after {
+		box-shadow: calc(44px - 18px) 0 0 var(--ds-hw-accent);
+	}
+
+	.ds-title {
+		font-size: 20px;
+	}
 }
