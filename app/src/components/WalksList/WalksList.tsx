@@ -3,7 +3,6 @@ import { type ReactNode, useEffect, useState } from "react";
 import {
 	deleteWalk,
 	getAllStressorEvents,
-	getStressorEvents,
 	getWalkRoute,
 	getWalks,
 	type StressorEvent,
@@ -14,19 +13,20 @@ import DsShell from "../DsShell";
 import Loader from "../Loader";
 import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
-import WalkMap from "./WalkMap";
+import WalkMap, { ROUTE_COLOURS, type Route as MapRoute } from "./WalkMap";
 import WalkRow from "./WalkRow";
 import { FILTER_LABELS, type WalkFilter } from "./walksListFilter";
+
+type CachedRoute = { positions: [number, number][] };
 
 function WalksList({ onBack }: { onBack: () => void }) {
 	const [walks, setWalks] = useState<Walk[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [selectedId, setSelectedId] = useState<number | null>(null);
-	const [positions, setPositions] = useState<[number, number][] | null>(null);
-	const [mapError, setMapError] = useState<string | null>(null);
+	const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+	const [routes, setRoutes] = useState<Map<number, CachedRoute>>(new Map());
+	const [routeColourMap, setRouteColourMap] = useState<Map<number, string>>(new Map());
 	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-	const [events, setEvents] = useState<StressorEvent[]>([]);
 	const [allEvents, setAllEvents] = useState<StressorEvent[]>([]);
 	const [filter, setFilter] = useState<WalkFilter>("this_week");
 
@@ -35,53 +35,112 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			.then(setWalks)
 			.catch(() => setError("Could not load walks"))
 			.finally(() => setLoading(false));
-		getAllStressorEvents()
-			.then(setAllEvents)
-			.catch(() => {});
+		getAllStressorEvents().then(setAllEvents).catch(() => {});
 	}, []);
+
+	const assignColour = (id: number) => {
+		setRouteColourMap((prev) => {
+			if (prev.has(id)) return prev;
+			const used = new Set(prev.values());
+			const colour = ROUTE_COLOURS.find((c) => !used.has(c)) ?? ROUTE_COLOURS[0];
+			return new Map(prev).set(id, colour);
+		});
+	};
+
+	const fetchRoute = (id: number) => {
+		if (routes.has(id)) {
+			if (routes.get(id)!.positions.length > 0) assignColour(id);
+			return;
+		}
+		getWalkRoute(id)
+			.then((geojson) => {
+				const positions = geojson.coordinates.map(
+					([lng, lat]) => [lat, lng] as [number, number],
+				);
+				setRoutes((prev) => new Map(prev).set(id, { positions }));
+				if (positions.length > 0) assignColour(id);
+			})
+			.catch(() => {
+				setRoutes((prev) => new Map(prev).set(id, { positions: [] }));
+			});
+	};
 
 	const handleDelete = async (id: number) => {
 		try {
 			await deleteWalk(id);
 			setWalks((w) => w.filter((walk) => walk.id !== id));
-			if (selectedId === id) {
-				setSelectedId(null);
-				setPositions(null);
-			}
+			setSelectedIds((prev) => {
+				const next = new Set(prev);
+				next.delete(id);
+				return next;
+			});
 		} catch {
 			setError("Could not delete walk");
 		}
 		setConfirmDeleteId(null);
 	};
 
-	const selectWalk = (id: number) => {
-		const deselect = selectedId === id;
-		setSelectedId(deselect ? null : id);
-		setPositions(null);
-		setMapError(null);
-		setEvents([]);
-		if (!deselect) {
-			getWalkRoute(id)
-				.then((geojson) => {
-					setPositions(geojson.coordinates.map(([lng, lat]) => [lat, lng]));
-				})
-				.catch(() => setMapError("No route recorded"));
-			getStressorEvents(id)
-				.then(setEvents)
-				.catch(() => {});
+	const toggleWalk = (id: number) => {
+		const deselecting = selectedIds.has(id);
+		setSelectedIds((prev) => {
+			const next = new Set(prev);
+			if (deselecting) next.delete(id);
+			else next.add(id);
+			return next;
+		});
+
+		if (deselecting) {
+			setRouteColourMap((prev) => {
+				const next = new Map(prev);
+				next.delete(id);
+				return next;
+			});
+		} else {
+			fetchRoute(id);
 		}
+	};
+
+	const toggleAll = () => {
+		if (selectedIds.size === filteredWalks.length) {
+			setSelectedIds(new Set());
+			setRouteColourMap(new Map());
+			return;
+		}
+		setSelectedIds(new Set(filteredWalks.map((w) => w.id)));
+		for (const w of filteredWalks) fetchRoute(w.id);
+		getAllStressorEvents().then(setAllEvents).catch(() => {});
 	};
 
 	const { filteredWalks, summary } = useFilteredWalks(walks, allEvents, filter);
 
+	const selectedIdList = [...selectedIds];
+	const selectedRoutes: MapRoute[] = selectedIdList
+		.map((id) => {
+			const r = routes.get(id);
+			if (!r || r.positions.length === 0) return null;
+			return { positions: r.positions, colour: routeColourMap.get(id) ?? ROUTE_COLOURS[0] };
+		})
+		.filter((r): r is MapRoute => r !== null);
+
+	const selectedEvents = selectedIds.size > 0
+		? allEvents.filter((e) => e.walk_id && selectedIds.has(e.walk_id))
+		: [];
+
 	let topContent: ReactNode;
-	if (selectedId && positions) {
+	if (selectedIds.size > 0 && selectedRoutes.length > 0) {
 		topContent = (
-			<WalkMap walkId={selectedId} positions={positions} events={events} />
+			<WalkMap
+				mapKey={selectedIdList.filter((id) => routes.get(id)?.positions.length).join("-")}
+				routes={selectedRoutes}
+				events={selectedEvents}
+			/>
 		);
-	} else if (selectedId) {
+	} else if (selectedIds.size > 0) {
+		const anyPending = selectedIdList.some((id) => !routes.has(id));
 		topContent = (
-			<div className="ds-speech">{mapError ?? "Loading map..."}</div>
+			<div className="ds-speech">
+				{anyPending ? "Loading routes..." : "No routes available"}
+			</div>
 		);
 	} else {
 		topContent = <div className="ds-speech">Select a walk</div>;
@@ -92,6 +151,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			sprite={idleImg}
 			top={topContent}
 			listLayout
+			onButtonPress={toggleAll}
 			bottom={
 				<>
 					<div className="ds-walks-header">
@@ -111,7 +171,12 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								))}
 							</select>
 							<button type="button" className="ds-btn-sm" onClick={onBack}>
-								<img className="ds-icon" src={homeImg} alt="Back" style={{ width: 15, height: 15 }} />
+								<img
+									className="ds-icon"
+									src={homeImg}
+									alt="Back"
+									style={{ width: 15, height: 15 }}
+								/>
 							</button>
 						</div>
 					</div>
@@ -128,9 +193,15 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							<WalkRow
 								key={w.id}
 								walk={w}
-								selected={selectedId === w.id}
+								selected={selectedIds.has(w.id)}
 								events={allEvents.filter((e) => e.walk_id === w.id)}
-								onSelect={() => selectWalk(w.id)}
+								routeColour={
+									selectedIds.size > 1 && selectedIds.has(w.id)
+										? routeColourMap.get(w.id) ??
+											(routes.get(w.id)?.positions.length === 0 ? "none" : undefined)
+										: undefined
+								}
+								onSelect={() => toggleWalk(w.id)}
 								onDelete={() => setConfirmDeleteId(w.id)}
 							/>
 						))}

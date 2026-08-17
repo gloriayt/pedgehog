@@ -8,11 +8,12 @@ type Props = {
 	walk: Walk;
 	selected: boolean;
 	events: StressorEvent[];
+	routeColour?: string | "none";
 	onSelect: () => void;
 	onDelete: () => void;
 };
 
-function WalkRow({ walk: w, selected, events, onSelect, onDelete }: Props) {
+function WalkRow({ walk: w, selected, events, routeColour, onSelect, onDelete }: Props) {
 	const duration = getWalkDuration(w.started_at, w.ended_at);
 	const startDate = new Date(w.started_at);
 	const time = format(startDate, "h:mma");
@@ -44,6 +45,14 @@ function WalkRow({ walk: w, selected, events, onSelect, onDelete }: Props) {
 					{duration}
 				</div>
 			</div>
+			{routeColour === "none" ? (
+				<span className="ds-route-dot ds-route-none">✕</span>
+			) : routeColour ? (
+				<span
+					className="ds-route-dot"
+					style={{ background: routeColour }}
+				/>
+			) : null}
 			<button
 				type="button"
 				className="ds-walk-delete"

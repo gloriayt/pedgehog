@@ -127,6 +127,7 @@ export default async function walks(app: FastifyInstance) {
 
 	app.delete("/walks/:id", async (req, reply) => {
 		const { id } = req.params as { id: string };
+		await pool.query("DELETE FROM stressor_events WHERE walk_id = $1", [id]);
 		const { rowCount } = await pool.query("DELETE FROM walks WHERE id = $1", [
 			id,
 		]);

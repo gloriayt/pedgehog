@@ -10,24 +10,37 @@ import {
 } from "react-leaflet";
 import type { StressorEvent } from "../../api";
 
-type Props = {
-	walkId: number;
+export type Route = {
 	positions: [number, number][];
+	colour: string;
+};
+
+export const ROUTE_COLOURS = [
+	"#0F6E56", "#4888c8", "#d87888", "#e8a840", "#8b6f4e",
+	"#7ab8d0", "#9b59b6", "#e74c3c", "#2ecc71", "#f39c12",
+	"#1abc9c", "#e67e22", "#3498db", "#c0392b", "#27ae60",
+];
+
+type Props = {
+	mapKey: string | number;
+	routes: Route[];
 	events: StressorEvent[];
 };
 
-function WalkMap({ walkId, positions, events }: Props) {
+function WalkMap({ mapKey, routes, events }: Props) {
+	const allPositions = routes.flatMap((r) => r.positions);
+	if (allPositions.length === 0) return null;
+
 	return (
 		<div className="ds-map-container">
-			<MapContainer
-				key={walkId}
-				bounds={positions}
-			>
+			<MapContainer key={mapKey} bounds={allPositions}>
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					attribution="&copy; OSM"
 				/>
-				<Polyline positions={positions} color="#0F6E56" weight={3} />
+				{routes.map((r, i) => (
+					<Polyline key={i} positions={r.positions} color={r.colour} weight={3} />
+				))}
 				{events
 					.filter(
 						(e): e is StressorEvent & { lat: number; lng: number } =>

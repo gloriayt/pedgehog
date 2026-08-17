@@ -803,6 +803,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 1px;
+	flex: 1;
+	min-width: 0;
 }
 
 .ds-walk-right {
@@ -839,6 +841,24 @@ body {
 .ds-walk-delete img {
 	width: 12px;
 	height: 12px;
+}
+
+.ds-route-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	flex-shrink: 0;
+	margin-right: 8px;
+}
+
+.ds-route-none {
+	background: none;
+	font-size: 10px;
+	font-weight: 700;
+	color: var(--ds-text-light);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .ds-walk-row:active {

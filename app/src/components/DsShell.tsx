@@ -16,11 +16,12 @@ type Props = {
 	top?: ReactNode;
 	bottom: ReactNode;
 	listLayout?: boolean;
+	onButtonPress?: () => void;
 };
 
 type Heart = { id: number; top: number; left: number };
 
-function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
+function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Props) {
 	const [hearts, setHearts] = useState<Heart[]>([]);
 	const [happy, setHappy] = useState(false);
 	const heartIdRef = useRef(0);
@@ -53,7 +54,8 @@ function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
 
 		setHappy(true);
 		addTimer(() => setHappy(false), 1500);
-	}, [addTimer, walking]);
+		onButtonPress?.();
+	}, [addTimer, walking, onButtonPress]);
 
 	return (
 		<>
