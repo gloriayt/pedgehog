@@ -668,7 +668,7 @@ body {
 	font-size: 8px;
 	color: var(--ds-text-light);
 	border: 1px solid var(--ds-panel-border);
-	border-radius: 8px;
+	border-radius: 4px;
 	padding: 0 10px;
 	white-space: nowrap;
 	display: flex;
@@ -778,6 +778,14 @@ body {
 	z-index: 1;
 }
 
+.ds-emoji-marker {
+	font-size: 18px;
+	line-height: 1;
+	text-align: center;
+	background: none !important;
+	border: none !important;
+}
+
 .ds-map-container .leaflet-container {
 	border-radius: inherit;
 }
@@ -800,6 +808,18 @@ body {
 	background: var(--ds-panel);
 	color: var(--ds-text);
 	width: 100%;
+}
+
+.ds-select-sm {
+	width: auto;
+	font-size: 8px;
+	padding: 5px 4px;
+}
+
+.ds-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
 
 .ds-textarea {

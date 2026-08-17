@@ -41,6 +41,7 @@ export const StressorEventSchema = z.object({
 	dog_id: z.number(),
 	stressor_type_id: z.number(),
 	walk_id: z.number().nullable(),
+	occurred_at: z.string(),
 	intensity: z.number().nullable(),
 	lat: z.number().nullable(),
 	lng: z.number().nullable(),

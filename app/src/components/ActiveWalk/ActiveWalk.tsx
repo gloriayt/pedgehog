@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { endWalk, logPoint } from "./api";
-import homeImg from "./assets/icon-home.webp";
-import walkImg from "./assets/pretzel-walk.webp";
-import DsShell, { Loader } from "./DsShell";
-import { haversine } from "./helpers";
+import { endWalk, logPoint } from "../../api";
+import homeImg from "../../assets/icon-home.webp";
+import walkImg from "../../assets/pretzel-walk.webp";
+import { haversine } from "../../helpers";
+import DsShell from "../DsShell";
+import Loader from "../Loader";
 import StressorEventForm from "./StressorEventForm";
 
 type Props = { walkId: number; onEnd: () => void };

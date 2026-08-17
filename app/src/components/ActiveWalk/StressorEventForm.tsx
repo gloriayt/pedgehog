@@ -1,6 +1,6 @@
 import type { StressorType } from "@pedgehog/shared";
 import { useEffect, useState } from "react";
-import { getStressorTypes, logStressorEvent } from "./api";
+import { getStressorTypes, logStressorEvent } from "../../api";
 
 type Props = {
 	walkId: number;

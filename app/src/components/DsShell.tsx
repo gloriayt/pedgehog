@@ -5,8 +5,10 @@ import {
 	useRef,
 	useState,
 } from "react";
-import heartImg from "./assets/heart.webp";
-import happyImg from "./assets/pretzel-happy.webp";
+import heartImg from "../assets/heart.webp";
+import happyImg from "../assets/pretzel-happy.webp";
+import { randomAround } from "../helpers";
+import Loader from "./Loader";
 
 type Props = {
 	sprite: string;
@@ -17,10 +19,6 @@ type Props = {
 };
 
 type Heart = { id: number; top: number; left: number };
-
-function randomAround(center: number, range: number) {
-	return center + (Math.random() - 0.5) * range;
-}
 
 function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
 	const [hearts, setHearts] = useState<Heart[]>([]);
@@ -154,16 +152,6 @@ function DsShell({ sprite, walking, top, bottom, listLayout }: Props) {
 				</div>
 			</div>
 		</>
-	);
-}
-
-export function Loader() {
-	return (
-		<span className="ds-walk-dots">
-			<span className="ds-walk-dot" />
-			<span className="ds-walk-dot" />
-			<span className="ds-walk-dot" />
-		</span>
 	);
 }
 

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import ActiveWalk from "./ActiveWalk";
 import { startWalk } from "./api";
 import boneImg from "./assets/bone.webp";
 import idleImg from "./assets/pretzel-idle.webp";
-import DsShell from "./DsShell";
-import WalksList from "./WalksList";
+import ActiveWalk from "./components/ActiveWalk/ActiveWalk";
+import DsShell from "./components/DsShell";
+import WalksList from "./components/WalksList/WalksList";
 
 function App() {
 	const [activeWalkId, setActiveWalkId] = useState<number | null>(null);
