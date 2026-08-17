@@ -5,7 +5,7 @@ import {
 	formatDuration,
 	intervalToDuration,
 } from "date-fns";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { getWalkRoute, getWalks } from "./api";
@@ -44,16 +44,19 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const totalDistance = walks.reduce((sum, w) => sum + (w.distance ?? 0), 0);
 	const totalMinutes = walks.reduce((sum, w) => {
 		if (!w.ended_at) return sum;
-		return sum + differenceInMinutes(new Date(w.ended_at), new Date(w.started_at));
+		return (
+			sum + differenceInMinutes(new Date(w.ended_at), new Date(w.started_at))
+		);
 	}, 0);
-	const totalTime = totalMinutes < 1 && totalMinutes > 0
-		? "< 1 min"
-		: formatDuration(
-				intervalToDuration({ start: 0, end: totalMinutes * 60 * 1000 }),
-				{ format: ["hours", "minutes"] },
-			) || "0 min";
+	const totalTime =
+		totalMinutes < 1 && totalMinutes > 0
+			? "< 1 min"
+			: formatDuration(
+					intervalToDuration({ start: 0, end: totalMinutes * 60 * 1000 }),
+					{ format: ["hours", "minutes"] },
+				) || "0 min";
 
-	let topContent: React.ReactNode;
+	let topContent: ReactNode;
 	if (selectedId && positions) {
 		topContent = (
 			<div className="ds-map-container">
@@ -71,7 +74,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			</div>
 		);
 	} else if (selectedId) {
-		topContent = <div className="ds-speech">{mapError ?? "Loading map..."}</div>;
+		topContent = (
+			<div className="ds-speech">{mapError ?? "Loading map..."}</div>
+		);
 	} else {
 		topContent = <div className="ds-speech">Select a walk</div>;
 	}
@@ -84,21 +89,23 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			bottom={
 				<>
 					<div className="ds-walks-header">
-						<div className="ds-speech">
-							{selectedId ? "Walk route" : "Past walks"}
+						<div className="ds-stats-inline">
+							{loading ? (
+								<Loader />
+							) : (
+								<>
+									TOTAL{" "}
+									{totalDistance >= 1000
+										? `${(totalDistance / 1000).toFixed(1)}km`
+										: `${Math.round(totalDistance)}m`}
+									{" · "}
+									{totalTime}
+								</>
+							)}
 						</div>
-						{loading ? (
-							<div className="ds-stats-inline"><Loader /></div>
-						) : walks.length > 0 ? (
-							<div className="ds-stats-inline">
-								TOTAL{" "}
-								{totalDistance >= 1000
-									? `${(totalDistance / 1000).toFixed(1)}km`
-									: `${Math.round(totalDistance)}m`}
-								{" · "}
-								{totalTime}
-							</div>
-						) : null}
+						<button type="button" className="ds-btn-sm" onClick={onBack}>
+							BACK
+						</button>
 					</div>
 
 					{loading && (
@@ -141,10 +148,6 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							);
 						})}
 					</div>
-
-					<button type="button" className="ds-btn-sm" onClick={onBack}>
-						BACK
-					</button>
 				</>
 			}
 		/>

@@ -1,21 +1,28 @@
-import { secondsToMilliseconds } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { endWalk, logPoint } from "./api";
 import homeImg from "./assets/icon-home.webp";
 import walkImg from "./assets/pretzel-walk.webp";
 import DsShell from "./DsShell";
+import { haversine } from "./helpers";
 
 type Props = { walkId: number; onEnd: () => void };
 
-const GPS_THROTTLE_MS = secondsToMilliseconds(5);
+const GPS_THROTTLE_MS = 1_000;
 
 function ActiveWalk({ walkId, onEnd }: Props) {
-	const [pointCount, setPointCount] = useState(0);
 	const [gpsError, setGpsError] = useState<string | null>(
 		!navigator.geolocation ? "No GPS" : null,
 	);
 	const [ending, setEnding] = useState(false);
+	const [elapsed, setElapsed] = useState(0);
+	const [distance, setDistance] = useState(0);
 	const lastSentRef = useRef(0);
+	const lastPosRef = useRef<{ lat: number; lng: number } | null>(null);
+
+	useEffect(() => {
+		const id = setInterval(() => setElapsed((s) => s + 1), 1000);
+		return () => clearInterval(id);
+	}, []);
 
 	useEffect(() => {
 		if (!navigator.geolocation) return;
@@ -26,10 +33,14 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 				if (now - lastSentRef.current < GPS_THROTTLE_MS) return;
 				lastSentRef.current = now;
 
-				const { latitude, longitude } = position.coords;
-				logPoint(walkId, latitude, longitude)
-					.then(() => setPointCount((c) => c + 1))
-					.catch(() => setGpsError("GPS lost"));
+				const { latitude: lat, longitude: lng } = position.coords;
+				const pos = { lat, lng };
+				const prev = lastPosRef.current;
+				if (prev) {
+					setDistance((d) => d + haversine(prev, pos));
+				}
+				lastPosRef.current = pos;
+				logPoint(walkId, lat, lng).catch(() => setGpsError("GPS lost"));
 			},
 			(error) => {
 				if (error.code === error.PERMISSION_DENIED) {
@@ -61,9 +72,18 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 			walking
 			bottom={
 				<>
-					<div className="ds-stat">
-						<div className="ds-stat-val">{pointCount}</div>
-						<div className="ds-stat-lbl">GPS POINTS</div>
+					<div className="ds-stats-row">
+						<div className="ds-stat">
+							<div className="ds-stat-val">
+								{String(Math.floor(elapsed / 60)).padStart(2, "0")}:
+								{String(elapsed % 60).padStart(2, "0")}
+							</div>
+							<div className="ds-stat-lbl">TIME</div>
+						</div>
+						<div className="ds-stat">
+							<div className="ds-stat-val">{Math.round(distance)}</div>
+							<div className="ds-stat-lbl">DISTANCE</div>
+						</div>
 					</div>
 
 					{gpsError && <div className="ds-error">{gpsError}</div>}
