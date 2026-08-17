@@ -580,7 +580,7 @@ body {
 	background: var(--ds-panel);
 	border: 1px solid var(--ds-panel-border);
 	border-radius: 4px;
-	padding: 5px 10px;
+	padding: 3px 6px;
 	cursor: pointer;
 	color: var(--ds-text-light);
 	letter-spacing: 0.5px;
@@ -625,6 +625,57 @@ body {
 	font-size: 16px;
 	font-weight: 400;
 }
+
+.ds-stats-compact .ds-stat {
+	padding: 6px 8px;
+}
+
+.ds-stats-compact .ds-stat-val {
+	font-size: 14px;
+}
+
+.ds-btn-compact {
+	padding: 6px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+}
+
+/* ===== ACTIVE WALK EVENTS ===== */
+
+.ds-events-list {
+	width: 100%;
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	position: relative;
+	z-index: 1;
+}
+
+.ds-event-row {
+	background: var(--ds-panel);
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 4px;
+	padding: 5px 8px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 9px;
+	color: var(--ds-text);
+}
+
+.ds-event-emoji {
+	font-size: 14px;
+}
+
+.ds-event-info {
+	color: var(--ds-text-light);
+}
+
 
 .ds-stat {
 	background: var(--ds-panel);
@@ -773,9 +824,18 @@ body {
 
 .ds-map-container {
 	position: absolute;
-	inset: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	border-radius: inherit;
 	z-index: 1;
+}
+
+.ds-map-container .leaflet-container {
+	height: 100% !important;
+	width: 100% !important;
+	border-radius: inherit;
 }
 
 .ds-emoji-marker {
@@ -784,10 +844,6 @@ body {
 	text-align: center;
 	background: none !important;
 	border: none !important;
-}
-
-.ds-map-container .leaflet-container {
-	border-radius: inherit;
 }
 
 /* ===== LOG EVENT FORM ===== */
@@ -813,7 +869,7 @@ body {
 .ds-select-sm {
 	width: auto;
 	font-size: 8px;
-	padding: 5px 4px;
+	padding: 6px 4px;
 }
 
 .ds-header-actions {

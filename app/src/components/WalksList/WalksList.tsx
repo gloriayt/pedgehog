@@ -8,6 +8,7 @@ import {
 	getWalks,
 	type StressorEvent,
 } from "../../api";
+import homeImg from "../../assets/icon-home.webp";
 import idleImg from "../../assets/pretzel-idle.webp";
 import DsShell from "../DsShell";
 import Loader from "../Loader";
@@ -110,7 +111,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								))}
 							</select>
 							<button type="button" className="ds-btn-sm" onClick={onBack}>
-								BACK
+								<img className="ds-icon" src={homeImg} alt="Back" style={{ width: 15, height: 15 }} />
 							</button>
 						</div>
 					</div>

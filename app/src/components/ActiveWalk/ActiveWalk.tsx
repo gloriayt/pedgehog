@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { endWalk, logPoint } from "../../api";
+import { endWalk, getStressorEvents, logPoint, type StressorEvent } from "../../api";
 import homeImg from "../../assets/icon-home.webp";
 import walkImg from "../../assets/pretzel-walk.webp";
 import { haversine } from "../../helpers";
 import DsShell from "../DsShell";
 import Loader from "../Loader";
+import ActiveWalkEventsList from "./ActiveWalkEventsList";
 import StressorEventForm from "./StressorEventForm";
 
 type Props = { walkId: number; onEnd: () => void };
@@ -19,7 +20,8 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [elapsed, setElapsed] = useState(0);
 	const [distance, setDistance] = useState(0);
 	const [showLog, setShowLog] = useState(false);
-	const [logCount, setLogCount] = useState(0);
+	const [showEndConfirm, setShowEndConfirm] = useState(false);
+	const [events, setEvents] = useState<StressorEvent[]>([]);
 	const lastSentRef = useRef(0);
 	const lastPosRef = useRef<{ lat: number; lng: number } | null>(null);
 
@@ -59,6 +61,10 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 		return () => navigator.geolocation.clearWatch(watchId);
 	}, [walkId]);
 
+	const refreshEvents = () => {
+		getStressorEvents(walkId).then(setEvents).catch(() => {});
+	};
+
 	const handleEnd = async () => {
 		setEnding(true);
 		try {
@@ -74,9 +80,10 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 		<DsShell
 			sprite={walkImg}
 			walking
+			listLayout
 			bottom={
 				<>
-					<div className="ds-stats-row">
+					<div className="ds-stats-row ds-stats-compact">
 						<div className="ds-stat">
 							<div className="ds-stat-val">
 								{String(Math.floor(elapsed / 60)).padStart(2, "0")}:
@@ -86,47 +93,66 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</div>
 						<div className="ds-stat">
 							<div className="ds-stat-val">{Math.round(distance)}</div>
-							<div className="ds-stat-lbl">DISTANCE</div>
+							<div className="ds-stat-lbl">DIST</div>
 						</div>
-						{logCount > 0 && (
-							<div className="ds-stat">
-								<div className="ds-stat-val">{logCount}</div>
-								<div className="ds-stat-lbl">EVENTS</div>
-							</div>
-						)}
+						<button
+							type="button"
+							className="ds-btn ds-btn-stop ds-btn-compact"
+							onClick={() => setShowEndConfirm(true)}
+							disabled={ending}
+						>
+							{ending ? (
+								<Loader />
+							) : (
+								<img className="ds-icon" src={homeImg} alt="Finish" style={{ width: 20, height: 20 }} />
+							)}
+						</button>
 					</div>
 
 					{gpsError && <div className="ds-error">{gpsError}</div>}
 
-					<div className="ds-btn-row">
-						<button
-							type="button"
-							className="ds-btn ds-btn-secondary"
-							onClick={() => setShowLog(true)}
-						>
-							LOG EVENT
-						</button>
-						<button
-							type="button"
-							className="ds-btn ds-btn-stop"
-							onClick={handleEnd}
-							disabled={ending}
-						>
-							<img className="ds-icon ds-icon-sm" src={homeImg} alt="" />
-							{ending ? <Loader /> : "FINISH"}
-						</button>
-					</div>
+					<ActiveWalkEventsList
+						events={events}
+						onAdd={() => setShowLog(true)}
+					/>
 
 					{showLog && (
 						<StressorEventForm
 							walkId={walkId}
 							getPosition={() => lastPosRef.current}
 							onSave={() => {
-								setLogCount((c) => c + 1);
+								refreshEvents();
 								setShowLog(false);
 							}}
 							onCancel={() => setShowLog(false)}
 						/>
+					)}
+
+					{showEndConfirm && (
+						<div className="ds-confirm-overlay">
+							<div className="ds-confirm">
+								<div className="ds-speech">End walk?</div>
+								<div className="ds-btn-row">
+									<button
+										type="button"
+										className="ds-btn ds-btn-stop"
+										onClick={() => {
+											setShowEndConfirm(false);
+											handleEnd();
+										}}
+									>
+										END
+									</button>
+									<button
+										type="button"
+										className="ds-btn ds-btn-secondary"
+										onClick={() => setShowEndConfirm(false)}
+									>
+										CANCEL
+									</button>
+								</div>
+							</div>
+						</div>
 					)}
 				</>
 			}

@@ -22,7 +22,6 @@ function WalkMap({ walkId, positions, events }: Props) {
 			<MapContainer
 				key={walkId}
 				bounds={positions}
-				style={{ height: "100%", width: "100%", borderRadius: "inherit" }}
 			>
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
