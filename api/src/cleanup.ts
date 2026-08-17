@@ -17,23 +17,32 @@ async function reverseGeocode(lat: number, lng: number): Promise<string | null> 
 	}
 }
 
+async function fillSuburb(walkId: number) {
+	const { rows } = await pool.query(
+		`SELECT ST_X(location::geometry) AS lng, ST_Y(location::geometry) AS lat
+		 FROM walk_points WHERE walk_id = $1 ORDER BY recorded_at LIMIT 1`,
+		[walkId],
+	);
+	if (!rows[0]) return;
+	const suburb = await reverseGeocode(rows[0].lat, rows[0].lng);
+	if (suburb) {
+		await pool.query("UPDATE walks SET suburb = $1 WHERE id = $2", [suburb, walkId]);
+		console.log(`  suburb → ${suburb}`);
+	}
+	// Nominatim rate limit: 1 req/sec
+	await new Promise((r) => setTimeout(r, 1100));
+}
+
 async function cleanup() {
-	// Find walks that started more than STALE_HOURS ago and never ended
+	// 1. End stale walks
 	const { rows: staleWalks } = await pool.query(
 		`SELECT id FROM walks
 		 WHERE ended_at IS NULL AND started_at < NOW() - INTERVAL '${STALE_HOURS} hours'`,
 	);
 
-	if (staleWalks.length === 0) {
-		console.log("No stale walks found");
-		await pool.end();
-		return;
-	}
-
-	console.log(`Found ${staleWalks.length} stale walk(s)`);
+	console.log(`Stale walks: ${staleWalks.length}`);
 
 	for (const { id } of staleWalks) {
-		// End the walk using the last GPS point timestamp (or now)
 		await pool.query(
 			`UPDATE walks SET ended_at = COALESCE(
 				(SELECT MAX(recorded_at) FROM walk_points WHERE walk_id = $1),
@@ -42,7 +51,6 @@ async function cleanup() {
 			[id],
 		);
 
-		// Build route + distance
 		await pool.query(
 			`WITH line AS (
 				SELECT ST_Simplify(ST_MakeLine(location::geometry ORDER BY recorded_at), 0.00005)::geography AS route
@@ -54,23 +62,20 @@ async function cleanup() {
 			[id],
 		);
 
-		// Populate suburb from first GPS point
-		const { rows: firstPoint } = await pool.query(
-			`SELECT ST_X(location::geometry) AS lng, ST_Y(location::geometry) AS lat
-			 FROM walk_points WHERE walk_id = $1 ORDER BY recorded_at LIMIT 1`,
-			[id],
-		);
+		await fillSuburb(id);
+		console.log(`Ended walk ${id}`);
+	}
 
-		if (firstPoint[0]) {
-			const suburb = await reverseGeocode(firstPoint[0].lat, firstPoint[0].lng);
-			if (suburb) {
-				await pool.query("UPDATE walks SET suburb = $1 WHERE id = $2", [suburb, id]);
-			}
-			// Nominatim rate limit: 1 req/sec
-			await new Promise((r) => setTimeout(r, 1100));
-		}
+	// 2. Fill missing suburbs on all walks
+	const { rows: missingSuburb } = await pool.query(
+		`SELECT id FROM walks WHERE suburb IS NULL`,
+	);
 
-		console.log(`Cleaned up walk ${id}`);
+	console.log(`Missing suburbs: ${missingSuburb.length}`);
+
+	for (const { id } of missingSuburb) {
+		await fillSuburb(id);
+		console.log(`Filled suburb for walk ${id}`);
 	}
 
 	await pool.end();
