@@ -1,19 +1,33 @@
 import type { StressorType } from "@pedgehog/shared";
 import { useEffect, useState } from "react";
-import { getStressorTypes, logStressorEvent } from "../../api";
+import type { StressorEvent } from "../../api";
+import {
+	getStressorTypes,
+	logStressorEvent,
+	updateStressorEvent,
+} from "../../api";
 
 type Props = {
 	walkId: number;
 	getPosition: () => { lat: number; lng: number } | null;
+	editing?: StressorEvent;
 	onSave: () => void;
 	onCancel: () => void;
 };
 
-function StressorEventForm({ walkId, getPosition, onSave, onCancel }: Props) {
+function AddEventForm({
+	walkId,
+	getPosition,
+	editing,
+	onSave,
+	onCancel,
+}: Props) {
 	const [types, setTypes] = useState<StressorType[]>([]);
-	const [selectedType, setSelectedType] = useState<number | null>(null);
-	const [intensity, setIntensity] = useState(1);
-	const [notes, setNotes] = useState("");
+	const [selectedType, setSelectedType] = useState<number | null>(
+		editing?.stressor_type_id ?? null,
+	);
+	const [intensity, setIntensity] = useState(editing?.intensity ?? 1);
+	const [notes, setNotes] = useState(editing?.notes ?? "");
 
 	useEffect(() => {
 		getStressorTypes().then((all) => {
@@ -21,26 +35,34 @@ function StressorEventForm({ walkId, getPosition, onSave, onCancel }: Props) {
 				(t) => t.type === "dog_encounter" || t.type === "cat_encounter",
 			);
 			setTypes(filtered);
-			setSelectedType(
+			const defaultId =
 				filtered.find((t) => t.type === "dog_encounter")?.id ??
-					filtered[0]?.id ??
-					null,
-			);
+				filtered[0]?.id ??
+				null;
+			setSelectedType((prev) => prev ?? defaultId);
 		});
 	}, []);
 
 	const handleSave = async () => {
 		if (!selectedType) return;
-		const pos = getPosition();
-		await logStressorEvent({
-			dog_id: 1,
-			stressor_type_id: selectedType,
-			walk_id: walkId,
-			intensity,
-			notes: notes || undefined,
-			lat: pos?.lat,
-			lng: pos?.lng,
-		});
+		if (editing) {
+			await updateStressorEvent(editing.id, {
+				stressor_type_id: selectedType,
+				intensity,
+				notes: notes || undefined,
+			});
+		} else {
+			const pos = getPosition();
+			await logStressorEvent({
+				dog_id: 1,
+				stressor_type_id: selectedType,
+				walk_id: walkId,
+				intensity,
+				notes: notes || undefined,
+				lat: pos?.lat,
+				lng: pos?.lng,
+			});
+		}
 		onSave();
 	};
 
@@ -102,4 +124,4 @@ function StressorEventForm({ walkId, getPosition, onSave, onCancel }: Props) {
 	);
 }
 
-export default StressorEventForm;
+export default AddEventForm;

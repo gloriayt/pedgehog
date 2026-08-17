@@ -11,14 +11,14 @@ function WalkDeleteConfirm({ onConfirm, onCancel }: Props) {
 				<div className="ds-btn-row">
 					<button
 						type="button"
-						className="ds-btn ds-btn-stop"
+						className="ds-btn-sm ds-btn-sm-stop"
 						onClick={onConfirm}
 					>
 						DELETE
 					</button>
 					<button
 						type="button"
-						className="ds-btn ds-btn-secondary"
+						className="ds-btn-sm"
 						onClick={onCancel}
 					>
 						CANCEL

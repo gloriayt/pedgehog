@@ -575,12 +575,12 @@ body {
 
 .ds-btn-sm {
 	font-family: inherit;
-	font-size: 9px;
+	font-size: 10px;
 	font-weight: 700;
 	background: var(--ds-panel);
 	border: 1px solid var(--ds-panel-border);
 	border-radius: 4px;
-	padding: 3px 6px;
+	padding: 5px 10px;
 	cursor: pointer;
 	color: var(--ds-text-light);
 	letter-spacing: 0.5px;
@@ -599,6 +599,12 @@ body {
 .ds-btn-sm-go {
 	background: var(--ds-btn-green);
 	border-color: var(--ds-btn-green-dark);
+	color: var(--ds-white);
+}
+
+.ds-btn-sm-stop {
+	background: var(--ds-btn-pink);
+	border-color: var(--ds-btn-pink-dark);
 	color: var(--ds-white);
 }
 
@@ -674,6 +680,45 @@ body {
 
 .ds-event-info {
 	color: var(--ds-text-light);
+}
+
+.ds-event-notes {
+	font-size: 8px;
+	opacity: 0.7;
+}
+
+.ds-event-actions {
+	display: flex;
+	gap: 4px;
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+.ds-event-action {
+	font-family: inherit;
+	font-size: 7px;
+	background: none;
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 3px;
+	padding: 2px 5px;
+	cursor: pointer;
+	color: var(--ds-text-light);
+}
+
+.ds-event-action:active {
+	opacity: 0.7;
+}
+
+.ds-event-action-delete {
+	font-size: 12px;
+	font-weight: 700;
+	padding: 0 4px;
+	color: var(--ds-btn-pink-dark);
+	border-color: var(--ds-btn-pink-dark);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
 }
 
 
@@ -1027,6 +1072,7 @@ body {
 	.ds-face-btns {
 		width: 54px;
 		height: 54px;
+		margin-top: 4px;
 	}
 
 	.ds-face-btn {

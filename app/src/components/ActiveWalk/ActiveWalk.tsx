@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { endWalk, getStressorEvents, logPoint, type StressorEvent } from "../../api";
+import {
+	deleteStressorEvent,
+	endWalk,
+	getStressorEvents,
+	logPoint,
+	type StressorEvent,
+} from "../../api";
 import homeImg from "../../assets/icon-home.webp";
 import walkImg from "../../assets/pretzel-walk.webp";
 import { haversine } from "../../helpers";
 import DsShell from "../DsShell";
 import Loader from "../Loader";
 import ActiveWalkEventsList from "./ActiveWalkEventsList";
-import StressorEventForm from "./StressorEventForm";
+import AddEventForm from "./AddEventForm";
 
 type Props = { walkId: number; onEnd: () => void };
 
@@ -19,7 +25,8 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [ending, setEnding] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
 	const [distance, setDistance] = useState(0);
-	const [showLog, setShowLog] = useState(false);
+	const [showForm, setShowForm] = useState(false);
+	const [editingEvent, setEditingEvent] = useState<StressorEvent | null>(null);
 	const [showEndConfirm, setShowEndConfirm] = useState(false);
 	const [events, setEvents] = useState<StressorEvent[]>([]);
 	const lastSentRef = useRef(0);
@@ -62,7 +69,14 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	}, [walkId]);
 
 	const refreshEvents = () => {
-		getStressorEvents(walkId).then(setEvents).catch(() => {});
+		getStressorEvents(walkId)
+			.then(setEvents)
+			.catch(() => {});
+	};
+
+	const handleDelete = async (id: number) => {
+		await deleteStressorEvent(id);
+		refreshEvents();
 	};
 
 	const handleEnd = async () => {
@@ -104,7 +118,12 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 							{ending ? (
 								<Loader />
 							) : (
-								<img className="ds-icon" src={homeImg} alt="Finish" style={{ width: 20, height: 20 }} />
+								<img
+									className="ds-icon"
+									src={homeImg}
+									alt="Finish"
+									style={{ width: 20, height: 20 }}
+								/>
 							)}
 						</button>
 					</div>
@@ -113,18 +132,31 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 
 					<ActiveWalkEventsList
 						events={events}
-						onAdd={() => setShowLog(true)}
+						onAdd={() => {
+							setEditingEvent(null);
+							setShowForm(true);
+						}}
+						onEdit={(event) => {
+							setEditingEvent(event);
+							setShowForm(true);
+						}}
+						onDelete={handleDelete}
 					/>
 
-					{showLog && (
-						<StressorEventForm
+					{showForm && (
+						<AddEventForm
 							walkId={walkId}
 							getPosition={() => lastPosRef.current}
+							editing={editingEvent ?? undefined}
 							onSave={() => {
 								refreshEvents();
-								setShowLog(false);
+								setShowForm(false);
+								setEditingEvent(null);
 							}}
-							onCancel={() => setShowLog(false)}
+							onCancel={() => {
+								setShowForm(false);
+								setEditingEvent(null);
+							}}
 						/>
 					)}
 
@@ -135,7 +167,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 								<div className="ds-btn-row">
 									<button
 										type="button"
-										className="ds-btn ds-btn-stop"
+										className="ds-btn-sm ds-btn-sm-stop"
 										onClick={() => {
 											setShowEndConfirm(false);
 											handleEnd();
@@ -145,7 +177,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 									</button>
 									<button
 										type="button"
-										className="ds-btn ds-btn-secondary"
+										className="ds-btn-sm"
 										onClick={() => setShowEndConfirm(false)}
 									>
 										CANCEL

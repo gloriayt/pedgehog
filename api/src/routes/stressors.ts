@@ -53,6 +53,41 @@ export default async function stressors(app: FastifyInstance) {
 		return rows[0];
 	});
 
+	app.patch("/stressor-events/:id", async (req, reply) => {
+		const { id } = req.params as { id: string };
+		const { stressor_type_id, intensity, notes } = req.body as {
+			stressor_type_id?: number;
+			intensity?: number;
+			notes?: string;
+		};
+		const { rowCount } = await pool.query(
+			`UPDATE stressor_events SET
+				stressor_type_id = COALESCE($2, stressor_type_id),
+				intensity = COALESCE($3, intensity),
+				notes = COALESCE($4, notes)
+			WHERE id = $1`,
+			[id, stressor_type_id ?? null, intensity ?? null, notes ?? null],
+		);
+		if (!rowCount) {
+			reply.code(404);
+			return { error: "Event not found" };
+		}
+		return { ok: true };
+	});
+
+	app.delete("/stressor-events/:id", async (req, reply) => {
+		const { id } = req.params as { id: string };
+		const { rowCount } = await pool.query(
+			"DELETE FROM stressor_events WHERE id = $1",
+			[id],
+		);
+		if (!rowCount) {
+			reply.code(404);
+			return { error: "Event not found" };
+		}
+		reply.code(204);
+	});
+
 	app.get("/stressor-events", async (req) => {
 		const { dog_id, walk_id } = req.query as {
 			dog_id?: string;

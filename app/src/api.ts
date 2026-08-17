@@ -93,3 +93,17 @@ export function logStressorEvent(params: {
 		body: JSON.stringify(params),
 	});
 }
+
+export function updateStressorEvent(
+	id: number,
+	params: { stressor_type_id?: number; intensity?: number; notes?: string },
+) {
+	return request<void>(`/stressor-events/${id}`, {
+		method: "PATCH",
+		body: JSON.stringify(params),
+	});
+}
+
+export function deleteStressorEvent(id: number) {
+	return request<void>(`/stressor-events/${id}`, { method: "DELETE" });
+}
