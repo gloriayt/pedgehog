@@ -8,7 +8,8 @@ import {
 import { type ReactNode, useEffect, useState } from "react";
 import { MapContainer, Polyline, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { getWalkRoute, getWalks } from "./api";
+import { deleteWalk, getWalkRoute, getWalks } from "./api";
+import binImg from "./assets/bin.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import DsShell, { Loader } from "./DsShell";
 
@@ -19,6 +20,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [positions, setPositions] = useState<[number, number][] | null>(null);
 	const [mapError, setMapError] = useState<string | null>(null);
+	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
 	useEffect(() => {
 		getWalks()
@@ -26,6 +28,20 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			.catch(() => setError("Could not load walks"))
 			.finally(() => setLoading(false));
 	}, []);
+
+	const handleDelete = async (id: number) => {
+		try {
+			await deleteWalk(id);
+			setWalks((w) => w.filter((walk) => walk.id !== id));
+			if (selectedId === id) {
+				setSelectedId(null);
+				setPositions(null);
+			}
+		} catch {
+			setError("Could not delete walk");
+		}
+		setConfirmDeleteId(null);
+	};
 
 	const selectWalk = (id: number) => {
 		const deselect = selectedId === id;
@@ -118,13 +134,17 @@ function WalksList({ onBack }: { onBack: () => void }) {
 					<div className="ds-walks-list">
 						{walks.map((w) => {
 							const duration = w.ended_at
-								? formatDuration(
-										intervalToDuration({
-											start: new Date(w.started_at),
-											end: new Date(w.ended_at),
-										}),
-										{ format: ["hours", "minutes"] },
-									) || "< 1 min"
+								? (
+										formatDuration(
+											intervalToDuration({
+												start: new Date(w.started_at),
+												end: new Date(w.ended_at),
+											}),
+											{ format: ["hours", "minutes"] },
+										) || "< 1 min"
+									)
+										.replace(/ hours?/g, "hr")
+										.replace(/ minutes?/g, "min")
 								: "in progress";
 
 							return (
@@ -141,13 +161,48 @@ function WalksList({ onBack }: { onBack: () => void }) {
 										<div className="ds-walk-suburb">
 											{w.suburb ?? "Unknown"}
 											{w.distance ? ` · ${Math.round(w.distance)}m` : ""}
+											{" · "}
+											{duration}
 										</div>
 									</div>
-									<div className="ds-walk-duration">{duration}</div>
+									<button
+											type="button"
+											className="ds-walk-delete"
+											onClick={(e) => {
+												e.stopPropagation();
+												setConfirmDeleteId(w.id);
+											}}
+										>
+											<img src={binImg} alt="Delete" />
+									</button>
 								</button>
 							);
 						})}
 					</div>
+
+					{confirmDeleteId && (
+						<div className="ds-confirm-overlay">
+							<div className="ds-confirm">
+								<div className="ds-speech">Delete this walk?</div>
+								<div className="ds-btn-row">
+									<button
+										type="button"
+										className="ds-btn ds-btn-stop"
+										onClick={() => handleDelete(confirmDeleteId)}
+									>
+										DELETE
+									</button>
+									<button
+										type="button"
+										className="ds-btn ds-btn-secondary"
+										onClick={() => setConfirmDeleteId(null)}
+									>
+										CANCEL
+									</button>
+								</div>
+							</div>
+						</div>
+					)}
 				</>
 			}
 		/>

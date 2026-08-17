@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ActiveWalk from "./ActiveWalk";
 import { startWalk } from "./api";
-import pawImg from "./assets/icon-paw.webp";
+import boneImg from "./assets/bone.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import DsShell from "./DsShell";
 import WalksList from "./WalksList";
@@ -43,7 +43,7 @@ function App() {
 				<>
 					<div className="ds-speech">
 						Ready for walkies!
-						<img className="ds-icon ds-icon-xs" src={pawImg} alt="" />
+						<img className="ds-icon ds-icon-xs" src={boneImg} alt="" />
 					</div>
 					<div className="ds-btn-row">
 						<button

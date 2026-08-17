@@ -410,8 +410,8 @@ body {
 }
 
 .ds-icon-xs {
-	width: 10px;
-	height: 10px;
+	width: 22px;
+	height: 22px;
 }
 
 /* ===== WALK WADDLE ===== */
@@ -695,10 +695,40 @@ body {
 	gap: 1px;
 }
 
+.ds-walk-right {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
 .ds-walk-duration {
 	font-size: 8px;
 	color: var(--ds-text-light);
 	white-space: nowrap;
+}
+
+.ds-walk-delete {
+	background: none;
+	border: 1px solid var(--ds-panel-border);
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 3px;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.4;
+	font-family: inherit;
+}
+
+.ds-walk-delete:active {
+	opacity: 0.8;
+}
+
+.ds-walk-delete img {
+	width: 12px;
+	height: 12px;
 }
 
 .ds-walk-row:active {
@@ -736,6 +766,26 @@ body {
 
 .ds-map-container .leaflet-container {
 	border-radius: inherit;
+}
+
+/* ===== CONFIRM DIALOG ===== */
+
+.ds-confirm-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: inherit;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 3;
+}
+
+.ds-confirm {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
 }
 
 /* ===== ERROR ===== */

@@ -7,8 +7,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 	let res: Response;
 	try {
 		res = await fetch(`${API_URL}${path}`, {
-			headers: { "Content-Type": "application/json" },
 			...options,
+			headers: options?.body
+				? { "Content-Type": "application/json", ...options?.headers }
+				: options?.headers,
 		});
 	} catch (e) {
 		throw new ApiError(`Network error: ${(e as Error).message}`);
@@ -18,6 +20,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 		throw new ApiError(`Request failed: ${res.status}`);
 	}
 
+	if (res.status === 204) return undefined as T;
 	return res.json() as Promise<T>;
 }
 
@@ -38,6 +41,10 @@ export function endWalk(walkId: number, stressScore?: number): Promise<Walk> {
 
 export function getWalks() {
 	return request<Walk[]>("/walks");
+}
+
+export function deleteWalk(walkId: number) {
+	return request<void>(`/walks/${walkId}`, { method: "DELETE" });
 }
 
 export function getWalkRoute(walkId: number) {

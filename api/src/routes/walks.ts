@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "fastify";
 import { EndWalkInput, StartWalkInput } from "@pedgehog/shared";
+import type { FastifyInstance } from "fastify";
 import { pool } from "../db.js";
 
 const NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse";
@@ -123,6 +123,18 @@ export default async function walks(app: FastifyInstance) {
 		);
 		reply.code(201);
 		return rows[0];
+	});
+
+	app.delete("/walks/:id", async (req, reply) => {
+		const { id } = req.params as { id: string };
+		const { rowCount } = await pool.query("DELETE FROM walks WHERE id = $1", [
+			id,
+		]);
+		if (!rowCount) {
+			reply.code(404);
+			return { error: "Walk not found" };
+		}
+		reply.code(204);
 	});
 
 	app.get("/walks/:id/geojson", async (req, reply) => {
