@@ -1,4 +1,5 @@
 import type { Walk } from "@pedgehog/shared";
+import { differenceInCalendarDays } from "date-fns";
 import { type ReactNode, useEffect, useState } from "react";
 import {
 	type AppEvent,
@@ -10,7 +11,9 @@ import {
 import homeImg from "../../assets/icon-home.webp";
 import idleImg from "../../assets/pretzel-idle.webp";
 import DsShell from "../DsShell";
+import ErrorBanner from "../Error";
 import Loader from "../Loader";
+import Popup from "../Popup";
 import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
 import WalkMap, { type Route as MapRoute, ROUTE_COLOURS } from "./WalkMap";
@@ -33,6 +36,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		new Map(),
 	);
 	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+	const [viewNotesWalk, setViewNotesWalk] = useState<Walk | null>(null);
 	const [allEvents, setAllEvents] = useState<AppEvent[]>([]);
 	const [filter, setFilter] = useState<WalkFilter>("this_week");
 
@@ -161,7 +165,21 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			</div>
 		);
 	} else {
-		topContent = <div className="ds-speech">Select a walk</div>;
+		const lastScavenge = allEvents
+			.filter((e) => e.type === "scavenging")
+			.sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime())[0];
+		const daysSince = lastScavenge
+			? differenceInCalendarDays(new Date(), new Date(lastScavenge.occurred_at))
+			: null;
+
+		topContent = (
+			<div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
+				{daysSince !== null && (
+					<div className="ds-speech">Days since scavenge: {daysSince}</div>
+				)}
+				<div className="ds-speech">Select a walk</div>
+			</div>
+		);
 	}
 
 	return (
@@ -204,7 +222,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							<Loader />
 						</div>
 					)}
-					{error && <div className="ds-error">{error}</div>}
+					{error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
 					<div className="ds-walks-list">
 						{!loading && filteredWalks.length === 0 && (
@@ -228,6 +246,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								}
 								onSelect={() => toggleWalk(w.id)}
 								onDelete={() => setConfirmDeleteId(w.id)}
+								onViewNotes={() => setViewNotesWalk(w)}
 							/>
 						))}
 					</div>
@@ -237,6 +256,19 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							onConfirm={() => handleDelete(confirmDeleteId)}
 							onCancel={() => setConfirmDeleteId(null)}
 						/>
+					)}
+
+					{viewNotesWalk && (
+						<Popup
+							message=""
+							confirmLabel="indeed"
+							confirmStyle="ds-btn-sm"
+							onConfirm={() => setViewNotesWalk(null)}
+						>
+							<div className="ds-speech" style={{ fontSize: 9 }}>
+								{viewNotesWalk.notes}
+							</div>
+						</Popup>
 					)}
 				</>
 			}

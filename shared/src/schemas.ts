@@ -16,6 +16,7 @@ export const WalkSchema = z.object({
 	distance: z.number().nullable(),
 	stress_score: z.number().min(1).max(5).nullable(),
 	suburb: z.string().nullable(),
+	notes: z.string().nullable(),
 });
 export type Walk = z.infer<typeof WalkSchema>;
 
@@ -25,6 +26,7 @@ export const StartWalkInput = z.object({
 
 export const EndWalkInput = z.object({
 	stress_score: z.number().min(1).max(5).optional(),
+	notes: z.string().optional(),
 });
 
 export const EventTypeSchema = z.object({

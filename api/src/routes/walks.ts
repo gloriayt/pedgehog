@@ -51,11 +51,11 @@ export default async function walks(app: FastifyInstance) {
 			reply.code(400);
 			return { error: parsed.error.flatten() };
 		}
-		const { stress_score } = parsed.data;
+		const { stress_score, notes } = parsed.data;
 
 		await pool.query(
-			"UPDATE walks SET ended_at = NOW(), stress_score = $2 WHERE id = $1",
-			[id, stress_score ?? null],
+			"UPDATE walks SET ended_at = NOW(), stress_score = $2, notes = $3 WHERE id = $1",
+			[id, stress_score ?? null, notes ?? null],
 		);
 
 		await pool.query(

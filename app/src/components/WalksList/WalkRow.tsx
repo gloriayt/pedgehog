@@ -11,6 +11,7 @@ type Props = {
 	routeColour?: string | "none";
 	onSelect: () => void;
 	onDelete: () => void;
+	onViewNotes: () => void;
 };
 
 function WalkRow({
@@ -20,6 +21,7 @@ function WalkRow({
 	routeColour,
 	onSelect,
 	onDelete,
+	onViewNotes,
 }: Props) {
 	const duration = getWalkDuration(w.started_at, w.ended_at);
 	const startDate = new Date(w.started_at);
@@ -56,6 +58,18 @@ function WalkRow({
 					{duration}
 				</div>
 			</div>
+			{w.notes && (
+				<button
+					type="button"
+					className="ds-walk-notes-btn"
+					onClick={(e) => {
+						e.stopPropagation();
+						onViewNotes();
+					}}
+				>
+					💭
+				</button>
+			)}
 			{routeColour === "none" ? (
 				<span className="ds-route-dot ds-route-none">✕</span>
 			) : routeColour ? (

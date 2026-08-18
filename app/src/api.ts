@@ -34,10 +34,10 @@ export function startWalk(dogId: number): Promise<Walk> {
 	});
 }
 
-export function endWalk(walkId: number, stressScore?: number): Promise<Walk> {
+export function endWalk(walkId: number, opts?: { stressScore?: number; notes?: string }): Promise<Walk> {
 	return request<Walk>(`/walks/${walkId}`, {
 		method: "PATCH",
-		body: JSON.stringify({ stress_score: stressScore }),
+		body: JSON.stringify({ stress_score: opts?.stressScore, notes: opts?.notes }),
 	});
 }
 

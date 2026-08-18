@@ -7,7 +7,7 @@ type Props = {
 	confirmStyle?: string;
 	cancelLabel?: string;
 	onConfirm: () => void;
-	onCancel: () => void;
+	onCancel?: () => void;
 };
 
 function Popup({
@@ -22,15 +22,17 @@ function Popup({
 	return (
 		<div className="ds-confirm-overlay">
 			<div className="ds-confirm">
-				<div className="ds-speech">{message}</div>
+				{message && <div className="ds-speech">{message}</div>}
 				{children}
 				<div className="ds-btn-row">
 					<button type="button" className={confirmStyle} onClick={onConfirm}>
 						{confirmLabel}
 					</button>
-					<button type="button" className="ds-btn-sm" onClick={onCancel}>
-						{cancelLabel}
-					</button>
+					{onCancel && (
+						<button type="button" className="ds-btn-sm" onClick={onCancel}>
+							{cancelLabel}
+						</button>
+					)}
 				</div>
 			</div>
 		</div>

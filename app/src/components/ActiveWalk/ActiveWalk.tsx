@@ -12,6 +12,7 @@ import homeImg from "../../assets/icon-home.webp";
 import walkImg from "../../assets/pretzel-walk.webp";
 import { haversine } from "../../helpers";
 import DsShell from "../DsShell";
+import ErrorBanner from "../Error";
 import Loader from "../Loader";
 import Popup from "../Popup";
 import ActiveWalkEventsList from "./ActiveWalkEventsList";
@@ -28,6 +29,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [ending, setEnding] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
 	const [distance, setDistance] = useState(0);
+	const [walkNotes, setWalkNotes] = useState("");
 	const [showForm, setShowForm] = useState(false);
 	const [editingEvent, setEditingEvent] = useState<AppEvent | null>(null);
 	const [showEndConfirm, setShowEndConfirm] = useState(false);
@@ -87,7 +89,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const handleEnd = async () => {
 		setEnding(true);
 		try {
-			await endWalk(walkId);
+			await endWalk(walkId, { notes: walkNotes || undefined });
 			onEnd();
 		} catch (e) {
 			setGpsError(`End failed: ${(e as Error).message}`);
@@ -154,7 +156,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</button>
 					</div>
 
-					{gpsError && <div className="ds-error">{gpsError}</div>}
+					{gpsError && <ErrorBanner message={gpsError} onDismiss={() => setGpsError(null)} />}
 
 					<ActiveWalkEventsList
 						events={events}
@@ -197,7 +199,15 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 								handleEnd();
 							}}
 							onCancel={() => setShowEndConfirm(false)}
-						/>
+						>
+							<textarea
+								className="ds-textarea"
+								placeholder="Walk notes (optional)"
+								value={walkNotes}
+								onChange={(e) => setWalkNotes(e.target.value)}
+								rows={2}
+							/>
+						</Popup>
 					)}
 
 					{showCancelConfirm && (

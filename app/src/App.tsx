@@ -4,6 +4,7 @@ import boneImg from "./assets/bone.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import ActiveWalk from "./components/ActiveWalk/ActiveWalk";
 import DsShell, { type DsShellHandle } from "./components/DsShell";
+import ErrorBanner from "./components/Error";
 import WalksList from "./components/WalksList/WalksList";
 
 function App() {
@@ -74,7 +75,7 @@ function App() {
 						</button>
 					</div>
 
-					{error && <div className="ds-error">{error}</div>}
+					{error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 				</>
 			}
 		/>
