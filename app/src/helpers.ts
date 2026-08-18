@@ -4,8 +4,8 @@ const EVENT_EMOJIS: Record<string, string> = {
 	dog_encounter: "🐕",
 	cat_encounter: "🐈",
 	bird_encounter: "🐦",
-	scavenging: "👹",
-	complimented: "🌸",
+	scavenge: "👹",
+	compliment: "🌸",
 };
 
 export function eventEmoji(type: string): string {

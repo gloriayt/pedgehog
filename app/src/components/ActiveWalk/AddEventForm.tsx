@@ -27,7 +27,7 @@ function AddEventForm({
 
 	useEffect(() => {
 		getEventTypes().then((all) => {
-			const order = ["dog_encounter", "cat_encounter", "bird_encounter", "complimented", "scavenging"];
+			const order = ["dog_encounter", "cat_encounter", "bird_encounter", "compliment", "scavenge"];
 			const filtered = order
 				.map((type) => all.find((t) => t.type === type))
 				.filter((t): t is EventType => t != null);

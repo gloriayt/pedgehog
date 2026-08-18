@@ -12,6 +12,6 @@ INSERT INTO event_types (type, category, label, direction, weight, half_life_hou
 ('human_encounter', 'human_interaction', 'Happy human encounter', -1, 0.5, 1),
 
 ('bird_encounter', 'animal_interaction', 'Bird encounter', 1, 1.5, 12),
-('scavenging', 'log_only', 'Scavenged', 1, 1.0, 24),
-('complimented', 'log_only', 'Compliment', -1, 1.0, 24)
+('scavenge', 'log_only', 'Scavenge', 1, 1.0, 24),
+('compliment', 'log_only', 'Compliment', -1, 1.0, 24)
 ON CONFLICT (type) DO NOTHING;  

@@ -166,7 +166,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		);
 	} else {
 		const lastScavenge = allEvents
-			.filter((e) => e.type === "scavenging")
+			.filter((e) => e.type === "scavenge")
 			.sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime())[0];
 		const daysSince = lastScavenge
 			? differenceInCalendarDays(new Date(), new Date(lastScavenge.occurred_at))

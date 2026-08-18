@@ -36,8 +36,8 @@ function WalkRow({
 		{ type: "dog_encounter", count: events.filter((e) => e.type === "dog_encounter").length },
 		{ type: "cat_encounter", count: events.filter((e) => e.type === "cat_encounter").length },
 		{ type: "bird_encounter", count: events.filter((e) => e.type === "bird_encounter").length },
-		{ type: "scavenging", count: events.filter((e) => e.type === "scavenging").length },
-		{ type: "complimented", count: events.filter((e) => e.type === "complimented").length },
+		{ type: "scavenge", count: events.filter((e) => e.type === "scavenge").length },
+		{ type: "compliment", count: events.filter((e) => e.type === "compliment").length },
 	].filter((c) => c.count > 0);
 
 	return (
