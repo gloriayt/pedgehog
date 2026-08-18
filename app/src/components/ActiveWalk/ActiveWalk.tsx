@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
-	deleteStressorEvent,
+	type AppEvent,
+	deleteEvent,
 	deleteWalk,
 	endWalk,
-	getStressorEvents,
+	getEvents,
 	logPoint,
-	type StressorEvent,
 } from "../../api";
 import binImg from "../../assets/bin.webp";
 import homeImg from "../../assets/icon-home.webp";
@@ -29,11 +29,11 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [elapsed, setElapsed] = useState(0);
 	const [distance, setDistance] = useState(0);
 	const [showForm, setShowForm] = useState(false);
-	const [editingEvent, setEditingEvent] = useState<StressorEvent | null>(null);
+	const [editingEvent, setEditingEvent] = useState<AppEvent | null>(null);
 	const [showEndConfirm, setShowEndConfirm] = useState(false);
 	const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 	const [deleteEventId, setDeleteEventId] = useState<number | null>(null);
-	const [events, setEvents] = useState<StressorEvent[]>([]);
+	const [events, setEvents] = useState<AppEvent[]>([]);
 	const lastSentRef = useRef(0);
 	const lastPosRef = useRef<{ lat: number; lng: number } | null>(null);
 
@@ -74,11 +74,13 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	}, [walkId]);
 
 	const refreshEvents = () => {
-		getStressorEvents(walkId).then(setEvents).catch(() => {});
+		getEvents(walkId)
+			.then(setEvents)
+			.catch(() => {});
 	};
 
 	const handleDeleteEvent = async (id: number) => {
-		await deleteStressorEvent(id);
+		await deleteEvent(id);
 		refreshEvents();
 	};
 
@@ -143,7 +145,12 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 							className="ds-btn ds-btn-stop ds-btn-compact"
 							onClick={() => setShowCancelConfirm(true)}
 						>
-							<img className="ds-icon" src={binImg} alt="Cancel" style={{ width: 20, height: 20 }} />
+							<img
+								className="ds-icon"
+								src={binImg}
+								alt="Cancel"
+								style={{ width: 20, height: 20 }}
+							/>
 						</button>
 					</div>
 

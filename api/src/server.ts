@@ -2,7 +2,7 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import "dotenv/config";
 import dogs from "./routes/dogs.js";
-import stressors from "./routes/stressors.js";
+import events from "./routes/events.js";
 import walks from "./routes/walks.js";
 
 const app = Fastify({ logger: true });
@@ -20,7 +20,7 @@ app.get("/health", async () => ({ status: "ok" }));
 
 app.register(dogs);
 app.register(walks);
-app.register(stressors);
+app.register(events);
 
 app
 	.listen({ port: 3000, host: "0.0.0.0" })

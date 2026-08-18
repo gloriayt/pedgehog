@@ -3,9 +3,7 @@ import { pool } from "../db.js";
 
 export default async function dogs(app: FastifyInstance) {
 	app.get("/dog_profiles", async () => {
-		const { rows } = await pool.query(
-			"SELECT * FROM dog_profiles ORDER BY id",
-		);
+		const { rows } = await pool.query("SELECT * FROM dog_profiles ORDER BY id");
 		return rows;
 	});
 

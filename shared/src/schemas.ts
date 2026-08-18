@@ -27,22 +27,22 @@ export const EndWalkInput = z.object({
 	stress_score: z.number().min(1).max(5).optional(),
 });
 
-export const StressorTypeSchema = z.object({
+export const EventTypeSchema = z.object({
 	id: z.number(),
 	type: z.string(),
 	category: z.string(),
 	label: z.string(),
 	direction: z.number(),
 });
-export type StressorType = z.infer<typeof StressorTypeSchema>;
+export type EventType = z.infer<typeof EventTypeSchema>;
 
-export const StressorEventSchema = z.object({
+export const EventSchema = z.object({
 	id: z.number(),
 	dog_id: z.number(),
-	stressor_type_id: z.number(),
+	event_type_id: z.number(),
 	walk_id: z.number().nullable(),
 	occurred_at: z.string(),
-	intensity: z.number().nullable(),
+	intensity: z.number().min(0).max(5).nullable(),
 	lat: z.number().nullable(),
 	lng: z.number().nullable(),
 	label: z.string(),
@@ -51,15 +51,15 @@ export const StressorEventSchema = z.object({
 	type: z.string(),
 	notes: z.string().nullable().optional(),
 });
-export type StressorEvent = z.infer<typeof StressorEventSchema>;
+export type AppEvent = z.infer<typeof EventSchema>;
 
-export const LogStressorEventInput = z.object({
+export const LogEventInput = z.object({
 	dog_id: z.number(),
-	stressor_type_id: z.number(),
+	event_type_id: z.number(),
 	walk_id: z.number().optional(),
 	occurred_at: z.string().optional(),
 	duration_minutes: z.number().optional(),
-	intensity: z.number().min(1).max(5).optional(),
+	intensity: z.number().min(0).max(5).optional(),
 	notes: z.string().optional(),
 	lat: z.number().optional(),
 	lng: z.number().optional(),

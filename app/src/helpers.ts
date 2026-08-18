@@ -1,5 +1,17 @@
 import { formatDuration, intervalToDuration } from "date-fns";
 
+const EVENT_EMOJIS: Record<string, string> = {
+	dog_encounter: "🐕",
+	cat_encounter: "🐈",
+	bird_encounter: "🐦",
+	scavenging: "👹",
+	complimented: "🌸",
+};
+
+export function eventEmoji(type: string): string {
+	return EVENT_EMOJIS[type] ?? "📌";
+}
+
 export function randomAround(center: number, range: number) {
 	return center + (Math.random() - 0.5) * range;
 }

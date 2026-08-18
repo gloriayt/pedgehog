@@ -1,6 +1,6 @@
-import type { StressorEvent, StressorType, Walk } from "@pedgehog/shared";
+import type { AppEvent, EventType, Walk } from "@pedgehog/shared";
 
-export type { StressorEvent };
+export type { AppEvent };
 
 const API_URL = import.meta.env.VITE_API_URL;
 class ApiError extends Error {}
@@ -67,43 +67,43 @@ export function logPoint(
 	});
 }
 
-export function getStressorEvents(walkId: number) {
-	return request<StressorEvent[]>(`/stressor-events?walk_id=${walkId}`);
+export function getEvents(walkId: number) {
+	return request<AppEvent[]>(`/events?walk_id=${walkId}`);
 }
 
-export function getAllStressorEvents(dogId = 1) {
-	return request<StressorEvent[]>(`/stressor-events?dog_id=${dogId}`);
+export function getAllEvents(dogId = 1) {
+	return request<AppEvent[]>(`/events?dog_id=${dogId}`);
 }
 
-export function getStressorTypes(): Promise<StressorType[]> {
-	return request<StressorType[]>("/stressor-types");
+export function getEventTypes(): Promise<EventType[]> {
+	return request<EventType[]>("/event-types");
 }
 
-export function logStressorEvent(params: {
+export function logEvent(params: {
 	dog_id: number;
-	stressor_type_id: number;
+	event_type_id: number;
 	walk_id?: number;
 	intensity?: number;
 	notes?: string;
 	lat?: number;
 	lng?: number;
 }): Promise<void> {
-	return request<void>("/stressor-events", {
+	return request<void>("/events", {
 		method: "POST",
 		body: JSON.stringify(params),
 	});
 }
 
-export function updateStressorEvent(
+export function updateEvent(
 	id: number,
-	params: { stressor_type_id?: number; intensity?: number; notes?: string },
+	params: { event_type_id?: number; intensity?: number; notes?: string },
 ) {
-	return request<void>(`/stressor-events/${id}`, {
+	return request<void>(`/events/${id}`, {
 		method: "PATCH",
 		body: JSON.stringify(params),
 	});
 }
 
-export function deleteStressorEvent(id: number) {
-	return request<void>(`/stressor-events/${id}`, { method: "DELETE" });
+export function deleteEvent(id: number) {
+	return request<void>(`/events/${id}`, { method: "DELETE" });
 }

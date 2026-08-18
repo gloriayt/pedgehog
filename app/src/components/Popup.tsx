@@ -25,11 +25,7 @@ function Popup({
 				<div className="ds-speech">{message}</div>
 				{children}
 				<div className="ds-btn-row">
-					<button
-						type="button"
-						className={confirmStyle}
-						onClick={onConfirm}
-					>
+					<button type="button" className={confirmStyle} onClick={onConfirm}>
 						{confirmLabel}
 					</button>
 					<button type="button" className="ds-btn-sm" onClick={onCancel}>

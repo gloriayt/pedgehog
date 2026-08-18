@@ -1,10 +1,11 @@
 import { format } from "date-fns";
-import type { StressorEvent } from "../../api";
+import type { AppEvent } from "../../api";
+import { eventEmoji } from "../../helpers";
 
 type Props = {
-	events: StressorEvent[];
+	events: AppEvent[];
 	onAdd: () => void;
-	onEdit: (event: StressorEvent) => void;
+	onEdit: (event: AppEvent) => void;
 	onDelete: (id: number) => void;
 };
 
@@ -14,7 +15,7 @@ function ActiveWalkEventsList({ events, onAdd, onEdit, onDelete }: Props) {
 			{events.map((e) => (
 				<div key={e.id} className="ds-event-row">
 					<span className="ds-event-emoji">
-						{e.type === "cat_encounter" ? "🐈" : "🐕"}
+						{eventEmoji(e.type)}
 					</span>
 					<div className="ds-event-info">
 						<div>

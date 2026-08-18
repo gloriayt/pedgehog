@@ -1,16 +1,12 @@
-import type { StressorType } from "@pedgehog/shared";
+import type { EventType } from "@pedgehog/shared";
 import { useEffect, useState } from "react";
-import type { StressorEvent } from "../../api";
-import {
-	getStressorTypes,
-	logStressorEvent,
-	updateStressorEvent,
-} from "../../api";
+import type { AppEvent } from "../../api";
+import { getEventTypes, logEvent, updateEvent } from "../../api";
 
 type Props = {
 	walkId: number;
 	getPosition: () => { lat: number; lng: number } | null;
-	editing?: StressorEvent;
+	editing?: AppEvent;
 	onSave: () => void;
 	onCancel: () => void;
 };
@@ -22,18 +18,19 @@ function AddEventForm({
 	onSave,
 	onCancel,
 }: Props) {
-	const [types, setTypes] = useState<StressorType[]>([]);
+	const [types, setTypes] = useState<EventType[]>([]);
 	const [selectedType, setSelectedType] = useState<number | null>(
-		editing?.stressor_type_id ?? null,
+		editing?.event_type_id ?? null,
 	);
-	const [intensity, setIntensity] = useState(editing?.intensity ?? 1);
+	const [intensity, setIntensity] = useState(editing?.intensity ?? 0);
 	const [notes, setNotes] = useState(editing?.notes ?? "");
 
 	useEffect(() => {
-		getStressorTypes().then((all) => {
-			const filtered = all.filter(
-				(t) => t.type === "dog_encounter" || t.type === "cat_encounter",
-			);
+		getEventTypes().then((all) => {
+			const order = ["dog_encounter", "cat_encounter", "bird_encounter", "complimented", "scavenging"];
+			const filtered = order
+				.map((type) => all.find((t) => t.type === type))
+				.filter((t): t is EventType => t != null);
 			setTypes(filtered);
 			const defaultId =
 				filtered.find((t) => t.type === "dog_encounter")?.id ??
@@ -46,16 +43,16 @@ function AddEventForm({
 	const handleSave = async () => {
 		if (!selectedType) return;
 		if (editing) {
-			await updateStressorEvent(editing.id, {
-				stressor_type_id: selectedType,
+			await updateEvent(editing.id, {
+				event_type_id: selectedType,
 				intensity,
 				notes: notes || undefined,
 			});
 		} else {
 			const pos = getPosition();
-			await logStressorEvent({
+			await logEvent({
 				dog_id: 1,
-				stressor_type_id: selectedType,
+				event_type_id: selectedType,
 				walk_id: walkId,
 				intensity,
 				notes: notes || undefined,
@@ -82,10 +79,11 @@ function AddEventForm({
 						))}
 					</select>
 
+					{types.find((t) => t.id === selectedType)?.category !== "log_only" && (
 					<div className="ds-intensity">
 						<div className="ds-stat-lbl">INTENSITY</div>
 						<div className="ds-intensity-btns">
-							{[1, 2, 3, 4, 5].map((n) => (
+							{[0, 1, 2, 3, 4, 5].map((n) => (
 								<button
 									key={n}
 									type="button"
@@ -97,6 +95,7 @@ function AddEventForm({
 							))}
 						</div>
 					</div>
+					)}
 
 					<textarea
 						className="ds-textarea"

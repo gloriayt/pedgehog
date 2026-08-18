@@ -5,13 +5,24 @@ const NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse";
 const USER_AGENT = `pedgehog-app (cleanup, contact: ${process.env.NOMINATIM_CONTACT})`;
 const STALE_HOURS = 4;
 
-async function reverseGeocode(lat: number, lng: number): Promise<string | null> {
+async function reverseGeocode(
+	lat: number,
+	lng: number,
+): Promise<string | null> {
 	try {
-		const res = await fetch(`${NOMINATIM_URL}?lat=${lat}&lon=${lng}&format=json`, {
-			headers: { "User-Agent": USER_AGENT },
-		});
+		const res = await fetch(
+			`${NOMINATIM_URL}?lat=${lat}&lon=${lng}&format=json`,
+			{
+				headers: { "User-Agent": USER_AGENT },
+			},
+		);
 		const data = await res.json();
-		return data.address?.suburb || data.address?.village || data.address?.town || null;
+		return (
+			data.address?.suburb ||
+			data.address?.village ||
+			data.address?.town ||
+			null
+		);
 	} catch {
 		return null;
 	}
@@ -26,7 +37,10 @@ async function fillSuburb(walkId: number) {
 	if (!rows[0]) return;
 	const suburb = await reverseGeocode(rows[0].lat, rows[0].lng);
 	if (suburb) {
-		await pool.query("UPDATE walks SET suburb = $1 WHERE id = $2", [suburb, walkId]);
+		await pool.query("UPDATE walks SET suburb = $1 WHERE id = $2", [
+			suburb,
+			walkId,
+		]);
 		console.log(`  suburb → ${suburb}`);
 	}
 	// Nominatim rate limit: 1 req/sec

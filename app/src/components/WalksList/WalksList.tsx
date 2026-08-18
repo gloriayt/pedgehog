@@ -1,11 +1,11 @@
 import type { Walk } from "@pedgehog/shared";
 import { type ReactNode, useEffect, useState } from "react";
 import {
+	type AppEvent,
 	deleteWalk,
-	getAllStressorEvents,
+	getAllEvents,
 	getWalkRoute,
 	getWalks,
-	type StressorEvent,
 } from "../../api";
 import homeImg from "../../assets/icon-home.webp";
 import idleImg from "../../assets/pretzel-idle.webp";
@@ -13,9 +13,13 @@ import DsShell from "../DsShell";
 import Loader from "../Loader";
 import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
-import WalkMap, { ROUTE_COLOURS, type Route as MapRoute } from "./WalkMap";
+import WalkMap, { type Route as MapRoute, ROUTE_COLOURS } from "./WalkMap";
 import WalkRow from "./WalkRow";
-import { FILTER_EMPTY, FILTER_LABELS, type WalkFilter } from "./walksListFilter";
+import {
+	FILTER_EMPTY,
+	FILTER_LABELS,
+	type WalkFilter,
+} from "./walksListFilter";
 
 type CachedRoute = { positions: [number, number][] };
 
@@ -25,9 +29,11 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const [error, setError] = useState<string | null>(null);
 	const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 	const [routes, setRoutes] = useState<Map<number, CachedRoute>>(new Map());
-	const [routeColourMap, setRouteColourMap] = useState<Map<number, string>>(new Map());
+	const [routeColourMap, setRouteColourMap] = useState<Map<number, string>>(
+		new Map(),
+	);
 	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-	const [allEvents, setAllEvents] = useState<StressorEvent[]>([]);
+	const [allEvents, setAllEvents] = useState<AppEvent[]>([]);
 	const [filter, setFilter] = useState<WalkFilter>("this_week");
 
 	useEffect(() => {
@@ -35,21 +41,25 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			.then(setWalks)
 			.catch(() => setError("Could not load walks"))
 			.finally(() => setLoading(false));
-		getAllStressorEvents().then(setAllEvents).catch(() => {});
+		getAllEvents()
+			.then(setAllEvents)
+			.catch(() => {});
 	}, []);
 
 	const assignColour = (id: number) => {
 		setRouteColourMap((prev) => {
 			if (prev.has(id)) return prev;
 			const used = new Set(prev.values());
-			const colour = ROUTE_COLOURS.find((c) => !used.has(c)) ?? ROUTE_COLOURS[0];
+			const colour =
+				ROUTE_COLOURS.find((c) => !used.has(c)) ?? ROUTE_COLOURS[0];
 			return new Map(prev).set(id, colour);
 		});
 	};
 
 	const fetchRoute = (id: number) => {
-		if (routes.has(id)) {
-			if (routes.get(id)!.positions.length > 0) assignColour(id);
+		const cached = routes.get(id);
+		if (cached) {
+			if (cached.positions.length > 0) assignColour(id);
 			return;
 		}
 		getWalkRoute(id)
@@ -108,7 +118,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		}
 		setSelectedIds(new Set(filteredWalks.map((w) => w.id)));
 		for (const w of filteredWalks) fetchRoute(w.id);
-		getAllStressorEvents().then(setAllEvents).catch(() => {});
+		getAllEvents()
+			.then(setAllEvents)
+			.catch(() => {});
 	};
 
 	const { filteredWalks, summary } = useFilteredWalks(walks, allEvents, filter);
@@ -118,19 +130,25 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		.map((id) => {
 			const r = routes.get(id);
 			if (!r || r.positions.length === 0) return null;
-			return { positions: r.positions, colour: routeColourMap.get(id) ?? ROUTE_COLOURS[0] };
+			return {
+				positions: r.positions,
+				colour: routeColourMap.get(id) ?? ROUTE_COLOURS[0],
+			};
 		})
 		.filter((r): r is MapRoute => r !== null);
 
-	const selectedEvents = selectedIds.size > 0
-		? allEvents.filter((e) => e.walk_id && selectedIds.has(e.walk_id))
-		: [];
+	const selectedEvents =
+		selectedIds.size > 0
+			? allEvents.filter((e) => e.walk_id && selectedIds.has(e.walk_id))
+			: [];
 
 	let topContent: ReactNode;
 	if (selectedIds.size > 0 && selectedRoutes.length > 0) {
 		topContent = (
 			<WalkMap
-				mapKey={selectedIdList.filter((id) => routes.get(id)?.positions.length).join("-")}
+				mapKey={selectedIdList
+					.filter((id) => routes.get(id)?.positions.length)
+					.join("-")}
 				routes={selectedRoutes}
 				events={selectedEvents}
 			/>
@@ -202,8 +220,10 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								events={allEvents.filter((e) => e.walk_id === w.id)}
 								routeColour={
 									selectedIds.size > 1 && selectedIds.has(w.id)
-										? routeColourMap.get(w.id) ??
-											(routes.get(w.id)?.positions.length === 0 ? "none" : undefined)
+										? (routeColourMap.get(w.id) ??
+											(routes.get(w.id)?.positions.length === 0
+												? "none"
+												: undefined))
 										: undefined
 								}
 								onSelect={() => toggleWalk(w.id)}

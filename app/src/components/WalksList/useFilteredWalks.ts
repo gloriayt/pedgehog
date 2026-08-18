@@ -5,7 +5,7 @@ import {
 	intervalToDuration,
 } from "date-fns";
 import { useMemo } from "react";
-import type { StressorEvent } from "../../api";
+import type { AppEvent } from "../../api";
 import type { WalkFilter } from "./walksListFilter";
 import { getFilterRange } from "./walksListFilter";
 
@@ -16,7 +16,7 @@ type FilteredWalksResult = {
 
 export function useFilteredWalks(
 	walks: Walk[],
-	allEvents: StressorEvent[],
+	allEvents: AppEvent[],
 	filter: WalkFilter,
 ): FilteredWalksResult {
 	return useMemo(() => {
@@ -54,6 +54,9 @@ export function useFilteredWalks(
 		const totalCats = filteredEvents.filter(
 			(e) => e.type === "cat_encounter",
 		).length;
+		const totalBirds = filteredEvents.filter(
+			(e) => e.type === "bird_encounter",
+		).length;
 
 		const distStr =
 			totalDistance >= 1000
@@ -63,6 +66,7 @@ export function useFilteredWalks(
 		let summary = `${distStr} · ${totalTime}`;
 		if (totalDogs > 0) summary += `  ·  ${totalDogs} 🐕`;
 		if (totalCats > 0) summary += ` ${totalCats} 🐈`;
+		if (totalBirds > 0) summary += ` ${totalBirds} 🐦`;
 
 		return { filteredWalks, summary };
 	}, [walks, allEvents, filter]);
