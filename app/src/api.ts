@@ -45,6 +45,13 @@ export function getWalks() {
 	return request<Walk[]>("/walks");
 }
 
+export function updateWalkNotes(walkId: number, notes: string) {
+	return request<Walk>(`/walks/${walkId}/notes`, {
+		method: "PATCH",
+		body: JSON.stringify({ notes }),
+	});
+}
+
 export function deleteWalk(walkId: number) {
 	return request<void>(`/walks/${walkId}`, { method: "DELETE" });
 }

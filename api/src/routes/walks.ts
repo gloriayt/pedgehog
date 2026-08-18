@@ -125,6 +125,21 @@ export default async function walks(app: FastifyInstance) {
 		return rows[0];
 	});
 
+	app.patch("/walks/:id/notes", async (req, reply) => {
+		const { id } = req.params as { id: string };
+		const { notes } = req.body as { notes: string };
+		const { rowCount } = await pool.query(
+			"UPDATE walks SET notes = $2 WHERE id = $1",
+			[id, notes ?? null],
+		);
+		if (!rowCount) {
+			reply.code(404);
+			return { error: "Walk not found" };
+		}
+		const { rows } = await pool.query("SELECT * FROM walks WHERE id = $1", [id]);
+		return rows[0];
+	});
+
 	app.delete("/walks/:id", async (req, reply) => {
 		const { id } = req.params as { id: string };
 		await pool.query("DELETE FROM events WHERE walk_id = $1", [id]);

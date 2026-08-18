@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { startWalk } from "./api";
 import boneImg from "./assets/bone.webp";
 import idleImg from "./assets/pretzel-idle.webp";
 import ActiveWalk from "./components/ActiveWalk/ActiveWalk";
-import DsShell, { type DsShellHandle } from "./components/DsShell";
+import DsShell from "./components/DsShell";
 import ErrorBanner from "./components/Error";
 import WalksList from "./components/WalksList/WalksList";
 
@@ -12,7 +12,6 @@ function App() {
 	const [showWalks, setShowWalks] = useState(false);
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const shellRef = useRef<DsShellHandle>(null);
 
 	const handleStart = async () => {
 		setPending(true);
@@ -40,9 +39,8 @@ function App() {
 
 	return (
 		<DsShell
-			ref={shellRef}
 			sprite={idleImg}
-			bottom={
+			bottom={({ throwBone }) => (
 				<>
 					<div className="ds-speech">
 						Ready for walkies!
@@ -50,7 +48,7 @@ function App() {
 							className="ds-icon ds-icon-xs"
 							src={boneImg}
 							alt=""
-							onClick={() => shellRef.current?.throwBone()}
+							onClick={throwBone}
 							style={{
 								cursor: "pointer",
 								WebkitTapHighlightColor: "transparent",
@@ -77,7 +75,7 @@ function App() {
 
 					{error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 				</>
-			}
+			)}
 		/>
 	);
 }

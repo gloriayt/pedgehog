@@ -7,6 +7,7 @@ import {
 	getAllEvents,
 	getWalkRoute,
 	getWalks,
+	updateWalkNotes,
 } from "../../api";
 import homeImg from "../../assets/icon-home.webp";
 import idleImg from "../../assets/pretzel-idle.webp";
@@ -36,7 +37,8 @@ function WalksList({ onBack }: { onBack: () => void }) {
 		new Map(),
 	);
 	const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-	const [viewNotesWalk, setViewNotesWalk] = useState<Walk | null>(null);
+	const [editNotesWalk, setEditNotesWalk] = useState<Walk | null>(null);
+	const [editNotesText, setEditNotesText] = useState("");
 	const [allEvents, setAllEvents] = useState<AppEvent[]>([]);
 	const [filter, setFilter] = useState<WalkFilter>("this_week");
 
@@ -146,6 +148,12 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			? allEvents.filter((e) => e.walk_id && selectedIds.has(e.walk_id))
 			: [];
 
+	const getRouteColour = (id: number): string | undefined => {
+		if (selectedIds.size <= 1 || !selectedIds.has(id)) return undefined;
+		return routeColourMap.get(id) ??
+			(routes.get(id)?.positions.length === 0 ? "none" : undefined);
+	};
+
 	let topContent: ReactNode;
 	if (selectedIds.size > 0 && selectedRoutes.length > 0) {
 		topContent = (
@@ -236,17 +244,13 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								walk={w}
 								selected={selectedIds.has(w.id)}
 								events={allEvents.filter((e) => e.walk_id === w.id)}
-								routeColour={
-									selectedIds.size > 1 && selectedIds.has(w.id)
-										? (routeColourMap.get(w.id) ??
-											(routes.get(w.id)?.positions.length === 0
-												? "none"
-												: undefined))
-										: undefined
-								}
+								routeColour={getRouteColour(w.id)}
 								onSelect={() => toggleWalk(w.id)}
 								onDelete={() => setConfirmDeleteId(w.id)}
-								onViewNotes={() => setViewNotesWalk(w)}
+								onEditNotes={() => {
+									setEditNotesWalk(w);
+									setEditNotesText(w.notes ?? "");
+								}}
 							/>
 						))}
 					</div>
@@ -258,16 +262,29 @@ function WalksList({ onBack }: { onBack: () => void }) {
 						/>
 					)}
 
-					{viewNotesWalk && (
+					{editNotesWalk && (
 						<Popup
-							message=""
-							confirmLabel="indeed"
-							confirmStyle="ds-btn-sm"
-							onConfirm={() => setViewNotesWalk(null)}
+							message={editNotesWalk.notes ? "Edit notes" : "Add notes"}
+							confirmLabel="save"
+							confirmStyle="ds-btn-sm ds-btn-sm-go"
+							cancelLabel="cancel"
+							onConfirm={async () => {
+								await updateWalkNotes(editNotesWalk.id, editNotesText);
+								setWalks((prev) =>
+									prev.map((w) =>
+										w.id === editNotesWalk.id ? { ...w, notes: editNotesText || null } : w,
+									),
+								);
+								setEditNotesWalk(null);
+							}}
+							onCancel={() => setEditNotesWalk(null)}
 						>
-							<div className="ds-speech" style={{ fontSize: 9 }}>
-								{viewNotesWalk.notes}
-							</div>
+							<textarea
+								className="ds-textarea"
+								value={editNotesText}
+								onChange={(e) => setEditNotesText(e.target.value)}
+								rows={3}
+							/>
 						</Popup>
 					)}
 				</>

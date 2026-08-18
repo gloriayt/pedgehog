@@ -2,6 +2,7 @@ import type { Walk } from "@pedgehog/shared";
 import { format, isToday, isYesterday } from "date-fns";
 import type { AppEvent } from "../../api";
 import binImg from "../../assets/bin.webp";
+import penImg from "../../assets/pen.webp";
 import { eventEmoji, getWalkDuration } from "../../helpers";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 	routeColour?: string | "none";
 	onSelect: () => void;
 	onDelete: () => void;
-	onViewNotes: () => void;
+	onEditNotes: () => void;
 };
 
 function WalkRow({
@@ -21,7 +22,7 @@ function WalkRow({
 	routeColour,
 	onSelect,
 	onDelete,
-	onViewNotes,
+	onEditNotes,
 }: Props) {
 	const duration = getWalkDuration(w.started_at, w.ended_at);
 	const startDate = new Date(w.started_at);
@@ -32,13 +33,18 @@ function WalkRow({
 			? `Yesterday ${time}`
 			: format(startDate, "EEE d MMM h:mma");
 
-	const counts = [
-		{ type: "dog_encounter", count: events.filter((e) => e.type === "dog_encounter").length },
-		{ type: "cat_encounter", count: events.filter((e) => e.type === "cat_encounter").length },
-		{ type: "bird_encounter", count: events.filter((e) => e.type === "bird_encounter").length },
-		{ type: "scavenge", count: events.filter((e) => e.type === "scavenge").length },
-		{ type: "compliment", count: events.filter((e) => e.type === "compliment").length },
-	].filter((c) => c.count > 0);
+	const EMOJI_TYPES = [
+		"dog_encounter",
+		"cat_encounter",
+		"bird_encounter",
+		"scavenge",
+		"compliment",
+	];
+	const typeCounts = events.reduce((acc, e) => {
+		if (EMOJI_TYPES.includes(e.type))
+			acc.set(e.type, (acc.get(e.type) ?? 0) + 1);
+		return acc;
+	}, new Map<string, number>());
 
 	return (
 		<button
@@ -49,7 +55,10 @@ function WalkRow({
 			<div className="ds-walk-left">
 				<div className="ds-walk-date">
 					{dateLabel}
-					{counts.map((c) => " " + Array(c.count).fill(eventEmoji(c.type)).join(" "))}
+					{[...typeCounts].map(
+						([type, count]) =>
+							" " + Array(count).fill(eventEmoji(type)).join(" "),
+					)}
 				</div>
 				<div className="ds-walk-suburb">
 					{w.suburb ?? "Unknown"}
@@ -58,23 +67,21 @@ function WalkRow({
 					{duration}
 				</div>
 			</div>
-			{w.notes && (
-				<button
-					type="button"
-					className="ds-walk-notes-btn"
-					onClick={(e) => {
-						e.stopPropagation();
-						onViewNotes();
-					}}
-				>
-					💭
-				</button>
-			)}
 			{routeColour === "none" ? (
 				<span className="ds-route-dot ds-route-none">✕</span>
 			) : routeColour ? (
 				<span className="ds-route-dot" style={{ background: routeColour }} />
 			) : null}
+			<button
+				type="button"
+				className="ds-walk-notes-btn"
+				onClick={(e) => {
+					e.stopPropagation();
+					onEditNotes();
+				}}
+			>
+				<img src={penImg} alt="Notes" className="ds-walk-action-icon" />
+			</button>
 			<button
 				type="button"
 				className="ds-walk-delete"

@@ -635,12 +635,36 @@ body {
 }
 
 @keyframes bone-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* ===== SCAVENGE PARTY ===== */
+
+.ds-drumstick {
+	position: absolute;
+	top: -30px;
+	font-size: 24px;
+	z-index: 4;
+	pointer-events: none;
+	animation: drumstick-fall 1.8s ease-in forwards;
+}
+
+@keyframes drumstick-fall {
+	0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+	70% { opacity: 1; }
+	100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+}
+
+.ds-sprite-frenzy {
+	animation: frenzy-wiggle 0.15s steps(1) infinite !important;
+}
+
+@keyframes frenzy-wiggle {
+	0% { transform: rotate(-8deg) scale(1.05); }
+	25% { transform: rotate(8deg) scale(0.95); }
+	50% { transform: rotate(-6deg) scale(1.05); }
+	75% { transform: rotate(6deg) scale(0.95); }
 }
 
 @keyframes heart-float {
@@ -1233,8 +1257,12 @@ body {
 	cursor: pointer;
 	padding: 0;
 	margin-right: 6px;
-	font-size: 12px;
 	-webkit-tap-highlight-color: transparent;
+}
+
+.ds-walk-action-icon {
+	width: 12px;
+	height: 12px;
 }
 
 .ds-error-close {

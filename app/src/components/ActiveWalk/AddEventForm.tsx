@@ -7,7 +7,7 @@ type Props = {
 	walkId: number;
 	getPosition: () => { lat: number; lng: number } | null;
 	editing?: AppEvent;
-	onSave: () => void;
+	onSave: (eventType: string) => void;
 	onCancel: () => void;
 };
 
@@ -60,7 +60,8 @@ function AddEventForm({
 				lng: pos?.lng,
 			});
 		}
-		onSave();
+		const savedType = types.find((t) => t.id === selectedType)?.type ?? "";
+		onSave(savedType);
 	};
 
 	return (

@@ -76,9 +76,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	}, [walkId]);
 
 	const refreshEvents = () => {
-		getEvents(walkId)
-			.then(setEvents)
-			.catch(() => {});
+		getEvents(walkId).then(setEvents).catch(() => {});
 	};
 
 	const handleDeleteEvent = async (id: number) => {
@@ -111,7 +109,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 			sprite={walkImg}
 			walking
 			listLayout
-			bottom={
+			bottom={({ scavengeParty }) => (
 				<>
 					<div className="ds-stats-row ds-stats-compact">
 						<div className="ds-stat">
@@ -176,10 +174,11 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 							walkId={walkId}
 							getPosition={() => lastPosRef.current}
 							editing={editingEvent ?? undefined}
-							onSave={() => {
+							onSave={(eventType) => {
 								refreshEvents();
 								setShowForm(false);
 								setEditingEvent(null);
+								if (eventType === "scavenge") scavengeParty();
 							}}
 							onCancel={() => {
 								setShowForm(false);
@@ -213,6 +212,8 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 					{showCancelConfirm && (
 						<Popup
 							message="Cancel walk?"
+							confirmLabel="yes"
+							cancelLabel="no"
 							onConfirm={() => {
 								setShowCancelConfirm(false);
 								handleCancel();
@@ -224,7 +225,6 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 					{deleteEventId && (
 						<Popup
 							message="Delete event?"
-							confirmLabel="DELETE"
 							onConfirm={() => {
 								handleDeleteEvent(deleteEventId);
 								setDeleteEventId(null);
@@ -233,7 +233,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						/>
 					)}
 				</>
-			}
+			)}
 		/>
 	);
 }
