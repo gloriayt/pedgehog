@@ -483,50 +483,50 @@ body {
 }
 
 .ds-bone-throw img {
-	width: 24px;
-	height: 24px;
-	animation: bone-spin 0.4s linear infinite;
+	width: 32px;
+	height: 32px;
+	animation: bone-spin 0.5s linear infinite;
 }
 
 .ds-bone-left {
 	top: 50%;
 	left: -20px;
-	animation: bone-fly-right 1.1s linear forwards;
+	animation: bone-fly-right 1.4s linear forwards;
 }
 .ds-bone-right {
 	top: 50%;
 	right: -20px;
-	animation: bone-fly-left 1.1s linear forwards;
+	animation: bone-fly-left 1.4s linear forwards;
 }
 .ds-bone-top {
 	top: -20px;
 	left: 50%;
-	animation: bone-fly-down 1.6s linear forwards;
+	animation: bone-fly-down 1.9s linear forwards;
 }
 .ds-bone-bottom {
 	bottom: -20px;
 	left: 50%;
-	animation: bone-fly-up 1.6s linear forwards;
+	animation: bone-fly-up 1.9s linear forwards;
 }
 .ds-bone-top-left {
 	top: -20px;
 	left: -20px;
-	animation: bone-fly-br 1.4s linear forwards;
+	animation: bone-fly-br 1.7s linear forwards;
 }
 .ds-bone-top-right {
 	top: -20px;
 	right: -20px;
-	animation: bone-fly-bl 1.4s linear forwards;
+	animation: bone-fly-bl 1.7s linear forwards;
 }
 .ds-bone-bottom-left {
 	bottom: -20px;
 	left: -20px;
-	animation: bone-fly-tr 1.4s linear forwards;
+	animation: bone-fly-tr 1.7s linear forwards;
 }
 .ds-bone-bottom-right {
 	bottom: -20px;
 	right: -20px;
-	animation: bone-fly-tl 1.4s linear forwards;
+	animation: bone-fly-tl 1.7s linear forwards;
 }
 
 @keyframes bone-fly-right {

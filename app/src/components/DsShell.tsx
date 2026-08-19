@@ -45,6 +45,23 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 		};
 	}, []);
 
+	const [blinking, setBlinking] = useState(false);
+
+	useEffect(() => {
+		if (walking) return;
+		const blink = () => {
+			setBlinking(true);
+			setTimeout(() => setBlinking(false), 100);
+		};
+		const schedule = (): ReturnType<typeof setTimeout> =>
+			setTimeout(() => {
+				blink();
+				timerId = schedule();
+			}, 4000 + Math.random() * 2000);
+		let timerId = schedule();
+		return () => clearTimeout(timerId);
+	}, [walking]);
+
 	const addTimer = useCallback((fn: () => void, ms: number) => {
 		const t = setTimeout(() => {
 			timersRef.current.delete(t);
@@ -139,7 +156,7 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 									{reaction === "woah" && <div className="ds-woah">‼️</div>}
 									<img
 										className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}${frenzy ? " ds-sprite-frenzy" : ""}`}
-										src={reaction === "happy" && !walking ? happyImg : sprite}
+										src={(reaction === "happy" || blinking) && !walking ? happyImg : sprite}
 										alt="Pretzel"
 										onClick={pet}
 										style={{ cursor: "pointer" }}
