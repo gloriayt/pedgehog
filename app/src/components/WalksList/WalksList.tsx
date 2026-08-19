@@ -180,14 +180,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			? differenceInCalendarDays(new Date(), new Date(lastScavenge.occurred_at))
 			: null;
 
-		topContent = (
-			<div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
-				{daysSince !== null && (
-					<div className="ds-speech">Days since scavenge: {daysSince}</div>
-				)}
-				<div className="ds-speech">Select a walk</div>
-			</div>
-		);
+		topContent = daysSince !== null ? (
+			<div className="ds-top-pill ds-speech">Days since last scavenge: {daysSince}</div>
+		) : undefined;
 	}
 
 	return (

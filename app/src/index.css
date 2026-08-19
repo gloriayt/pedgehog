@@ -987,6 +987,15 @@ body {
 
 /* ===== WALKS LIST ===== */
 
+.ds-top-pill {
+	position: absolute;
+	top: 24px;
+	left: 50%;
+	translate: -50% 0;
+	white-space: nowrap;
+	max-width: none;
+}
+
 .ds-empty {
 	flex: 1;
 	display: flex;

@@ -26,16 +26,15 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	const [gpsError, setGpsError] = useState<string | null>(
 		!navigator.geolocation ? "No GPS" : null,
 	);
+	const gpsErrorTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const [ending, setEnding] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
 	const [distance, setDistance] = useState(0);
 	const [walkNotes, setWalkNotes] = useState("");
-	const [showForm, setShowForm] = useState(false);
-	const [editingEvent, setEditingEvent] = useState<AppEvent | null>(null);
-	const [showEndConfirm, setShowEndConfirm] = useState(false);
-	const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-	const [deleteEventId, setDeleteEventId] = useState<number | null>(null);
+	const [formEvent, setFormEvent] = useState<AppEvent | "new" | null>(null);
+	const [popup, setPopup] = useState<"end" | "cancel" | { deleteId: number } | null>(null);
 	const [events, setEvents] = useState<AppEvent[]>([]);
+
 	const lastSentRef = useRef(0);
 	const lastPosRef = useRef<{ lat: number; lng: number } | null>(null);
 
@@ -47,11 +46,23 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 	useEffect(() => {
 		if (!navigator.geolocation) return;
 
+		const timer = gpsErrorTimer;
+		const delayError = (msg: string) => {
+			clearTimeout(timer.current);
+			timer.current = setTimeout(() => setGpsError(msg), 5000);
+		};
+		const clearError = () => {
+			clearTimeout(timer.current);
+			setGpsError(null);
+		};
+
 		const watchId = navigator.geolocation.watchPosition(
 			(position) => {
 				const now = Date.now();
 				if (now - lastSentRef.current < GPS_THROTTLE_MS) return;
 				lastSentRef.current = now;
+
+				clearError();
 
 				const { latitude: lat, longitude: lng } = position.coords;
 				const pos = { lat, lng };
@@ -60,19 +71,20 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 					setDistance((d) => d + haversine(prev, pos));
 				}
 				lastPosRef.current = pos;
-				logPoint(walkId, lat, lng).catch(() => setGpsError("GPS lost"));
+				logPoint(walkId, lat, lng).catch(() => delayError("GPS lost"));
 			},
 			(error) => {
-				if (error.code === error.PERMISSION_DENIED) {
-					setGpsError("GPS denied");
-				} else {
-					setGpsError("GPS error");
-				}
+				delayError(
+					error.code === error.PERMISSION_DENIED ? "GPS denied" : "GPS error",
+				);
 			},
 			{ enableHighAccuracy: true, maximumAge: 0 },
 		);
 
-		return () => navigator.geolocation.clearWatch(watchId);
+		return () => {
+			navigator.geolocation.clearWatch(watchId);
+			clearTimeout(timer.current);
+		};
 	}, [walkId]);
 
 	const refreshEvents = () => {
@@ -126,7 +138,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						<button
 							type="button"
 							className="ds-btn ds-btn-go ds-btn-compact"
-							onClick={() => setShowEndConfirm(true)}
+							onClick={() => setPopup("end")}
 							disabled={ending}
 						>
 							{ending ? (
@@ -143,7 +155,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						<button
 							type="button"
 							className="ds-btn ds-btn-stop ds-btn-compact"
-							onClick={() => setShowCancelConfirm(true)}
+							onClick={() => setPopup("cancel")}
 						>
 							<img
 								className="ds-icon"
@@ -154,50 +166,42 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</button>
 					</div>
 
-					{gpsError && <ErrorBanner message={gpsError} onDismiss={() => setGpsError(null)} />}
+					{gpsError && (
+						<ErrorBanner message={gpsError} onDismiss={() => {
+							clearTimeout(gpsErrorTimer.current);
+							setGpsError(null);
+						}} />
+					)}
 
 					<ActiveWalkEventsList
 						events={events}
-						onAdd={() => {
-							setEditingEvent(null);
-							setShowForm(true);
-						}}
-						onEdit={(event) => {
-							setEditingEvent(event);
-							setShowForm(true);
-						}}
-						onDelete={(id) => setDeleteEventId(id)}
+						onAdd={() => setFormEvent("new")}
+						onEdit={setFormEvent}
+						onDelete={(id) => setPopup({ deleteId: id })}
 					/>
 
-					{showForm && (
+					{formEvent && (
 						<AddEventForm
 							walkId={walkId}
 							getPosition={() => lastPosRef.current}
-							editing={editingEvent ?? undefined}
+							editing={formEvent !== "new" ? formEvent : undefined}
 							onSave={(eventType) => {
 								refreshEvents();
-								setShowForm(false);
-								setEditingEvent(null);
+								setFormEvent(null);
 								if (eventType === "scavenge") scavengeParty();
 							}}
-							onCancel={() => {
-								setShowForm(false);
-								setEditingEvent(null);
-							}}
+							onCancel={() => setFormEvent(null)}
 						/>
 					)}
 
-					{showEndConfirm && (
+					{popup === "end" && (
 						<Popup
 							message="Save walk?"
 							confirmLabel="yes pls!"
 							cancelLabel="not yet"
 							confirmStyle="ds-btn-sm ds-btn-sm-go"
-							onConfirm={() => {
-								setShowEndConfirm(false);
-								handleEnd();
-							}}
-							onCancel={() => setShowEndConfirm(false)}
+							onConfirm={() => { setPopup(null); handleEnd(); }}
+							onCancel={() => setPopup(null)}
 						>
 							<textarea
 								className="ds-textarea"
@@ -209,27 +213,21 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</Popup>
 					)}
 
-					{showCancelConfirm && (
+					{popup === "cancel" && (
 						<Popup
 							message="Cancel walk?"
 							confirmLabel="yes"
 							cancelLabel="no"
-							onConfirm={() => {
-								setShowCancelConfirm(false);
-								handleCancel();
-							}}
-							onCancel={() => setShowCancelConfirm(false)}
+							onConfirm={() => { setPopup(null); handleCancel(); }}
+							onCancel={() => setPopup(null)}
 						/>
 					)}
 
-					{deleteEventId && (
+					{popup && typeof popup === "object" && (
 						<Popup
 							message="Delete event?"
-							onConfirm={() => {
-								handleDeleteEvent(deleteEventId);
-								setDeleteEventId(null);
-							}}
-							onCancel={() => setDeleteEventId(null)}
+							onConfirm={() => { handleDeleteEvent(popup.deleteId); setPopup(null); }}
+							onCancel={() => setPopup(null)}
 						/>
 					)}
 				</>
