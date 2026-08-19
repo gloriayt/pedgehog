@@ -23,15 +23,6 @@ export default async function walks(app: FastifyInstance) {
 
 	app.get("/walks", async (req) => {
 		const { dog_id } = req.query as { dog_id?: string };
-
-		// Auto-end walks older than 4 hours
-		await pool.query(
-			`UPDATE walks SET ended_at = COALESCE(
-				(SELECT MAX(recorded_at) FROM walk_points WHERE walk_id = walks.id),
-				NOW()
-			) WHERE ended_at IS NULL AND started_at < NOW() - INTERVAL '4 hours'`,
-		);
-
 		const { rows } = await pool.query(
 			dog_id
 				? "SELECT * FROM walks WHERE dog_id = $1 ORDER BY started_at DESC"
