@@ -16,26 +16,27 @@ export function randomAround(center: number, range: number) {
 	return center + (Math.random() - 0.5) * range;
 }
 
-/** Returns a short walk duration string like "1hr 23min". */
+export function shortDuration(s: string): string {
+	return s.replace(/ hours?/g, "hr").replace(/ minutes?/g, "min");
+}
+
+// e.g. "1hr 23min"
 export function getWalkDuration(
 	startedAt: string,
 	endedAt: string | null,
 ): string {
 	if (!endedAt) return "in progress";
-	return (
-		formatDuration(
-			intervalToDuration({
-				start: new Date(startedAt),
-				end: new Date(endedAt),
-			}),
-			{ format: ["hours", "minutes"] },
-		) || "< 1 min"
-	)
-		.replace(/ hours?/g, "hr")
-		.replace(/ minutes?/g, "min");
+	const raw = formatDuration(
+		intervalToDuration({
+			start: new Date(startedAt),
+			end: new Date(endedAt),
+		}),
+		{ format: ["hours", "minutes"] },
+	) || "< 1 min";
+	return shortDuration(raw);
 }
 
-/** Returns the distance in metres between two lat/lng points. */
+// gets distance in metres between 2 lat/long points
 export function haversine(
 	a: { lat: number; lng: number },
 	b: { lat: number; lng: number },

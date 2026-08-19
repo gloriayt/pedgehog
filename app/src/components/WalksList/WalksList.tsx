@@ -209,7 +209,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 									</option>
 								))}
 							</select>
-							<button type="button" className="ds-btn-sm" onClick={onBack}>
+							<button type="button" className="ds-btn-sm" onClick={onBack} style={{ padding: 5 }}>
 								<img
 									className="ds-icon"
 									src={homeImg}

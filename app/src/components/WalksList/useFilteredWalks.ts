@@ -6,12 +6,13 @@ import {
 } from "date-fns";
 import { useMemo } from "react";
 import type { AppEvent } from "../../api";
+import { shortDuration } from "../../helpers";
 import type { WalkFilter } from "./walksListFilter";
 import { getFilterRange } from "./walksListFilter";
 
 type FilteredWalksResult = {
 	filteredWalks: Walk[];
-	summary: string; // e.g. 1.5km · 1 hour 5 minutes  ·  3 🐕 1 🐈
+	summary: string; // e.g. "1.5km · 1hr 5min  ·  3 🐕 1 🐈"
 };
 
 export function useFilteredWalks(
@@ -39,10 +40,12 @@ export function useFilteredWalks(
 		const totalTime =
 			totalMinutes < 1 && totalMinutes > 0
 				? "< 1 min"
-				: formatDuration(
-						intervalToDuration({ start: 0, end: totalMinutes * 60 * 1000 }),
-						{ format: ["hours", "minutes"] },
-					) || "0 min";
+				: shortDuration(
+						formatDuration(
+							intervalToDuration({ start: 0, end: totalMinutes * 60 * 1000 }),
+							{ format: ["hours", "minutes"] },
+						) || "0 min",
+					);
 
 		const walkIds = new Set(filteredWalks.map((w) => w.id));
 		const filteredEvents = allEvents.filter(
