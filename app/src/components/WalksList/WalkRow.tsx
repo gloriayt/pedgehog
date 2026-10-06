@@ -1,9 +1,9 @@
-import type { Walk } from "@pedgehog/shared";
+import { EventTypesSchema, type EventTypes, type Walk } from "@pedgehog/shared";
 import { format, isToday, isYesterday } from "date-fns";
 import type { AppEvent } from "../../api";
 import binImg from "../../assets/bin.webp";
 import penImg from "../../assets/pen.webp";
-import { eventEmoji, getWalkDuration } from "../../helpers";
+import { getEventTypeEmoji, getWalkDuration } from "../../helpers";
 
 type Props = {
 	walk: Walk;
@@ -33,18 +33,11 @@ function WalkRow({
 			? `Yesterday ${time}`
 			: format(startDate, "EEE d MMM h:mma");
 
-	const EMOJI_TYPES = [
-		"dog_encounter",
-		"cat_encounter",
-		"bird_encounter",
-		"scavenge",
-		"compliment",
-	];
 	const typeCounts = events.reduce((acc, e) => {
-		if (EMOJI_TYPES.includes(e.type))
+		if (EventTypesSchema.options.includes(e.type))
 			acc.set(e.type, (acc.get(e.type) ?? 0) + 1);
 		return acc;
-	}, new Map<string, number>());
+	}, new Map<EventTypes, number>());
 
 	return (
 		<button
@@ -57,7 +50,7 @@ function WalkRow({
 					{dateLabel}
 					{[...typeCounts].map(
 						([type, count]) =>
-							" " + Array(count).fill(eventEmoji(type)).join(" "),
+							` ${Array(count).fill(getEventTypeEmoji(type)).join(" ")}`,
 					)}
 				</div>
 				<div className="ds-walk-suburb">
@@ -67,11 +60,13 @@ function WalkRow({
 					{duration}
 				</div>
 			</div>
+
 			{routeColour === "none" ? (
 				<span className="ds-route-dot ds-route-none">✕</span>
 			) : routeColour ? (
 				<span className="ds-route-dot" style={{ background: routeColour }} />
 			) : null}
+
 			<button
 				type="button"
 				className="ds-walk-notes-btn"

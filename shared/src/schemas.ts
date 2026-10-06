@@ -29,10 +29,27 @@ export const EndWalkInput = z.object({
 	notes: z.string().optional(),
 });
 
+export const EventTypesSchema = z.enum([
+	"dog_encounter",
+	"cat_encounter",
+	"bird_encounter",
+	"scavenge",
+	"compliment",
+	'zoomies',
+]);
+export type EventTypes = z.infer<typeof EventTypesSchema>;
+
+export const EventCategoriesSchema = z.enum([
+	'animal_interaction',
+	'enrichment',
+	'log_only',
+])
+export type EventCategories = z.infer<typeof EventCategoriesSchema>;
+
 export const EventTypeSchema = z.object({
 	id: z.number(),
-	type: z.string(),
-	category: z.string(),
+	type: EventTypesSchema,
+	category: EventCategoriesSchema,
 	label: z.string(),
 	direction: z.number(),
 });
@@ -48,9 +65,9 @@ export const EventSchema = z.object({
 	lat: z.number().nullable(),
 	lng: z.number().nullable(),
 	label: z.string(),
-	category: z.string(),
+	category: EventCategoriesSchema,
 	direction: z.number(),
-	type: z.string(),
+	type: EventTypesSchema,
 	notes: z.string().nullable().optional(),
 });
 export type AppEvent = z.infer<typeof EventSchema>;

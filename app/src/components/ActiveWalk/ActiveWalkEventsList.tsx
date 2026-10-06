@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import type { AppEvent } from "../../api";
-import { eventEmoji } from "../../helpers";
+import { getEventTypeEmoji } from "../../helpers";
 
 type Props = {
 	events: AppEvent[];
@@ -15,7 +15,7 @@ function ActiveWalkEventsList({ events, onAdd, onEdit, onDelete }: Props) {
 			{events.map((e) => (
 				<div key={e.id} className="ds-event-row">
 					<span className="ds-event-emoji">
-						{eventEmoji(e.type)}
+						{getEventTypeEmoji(e.type)}
 					</span>
 					<div className="ds-event-info">
 						<div>

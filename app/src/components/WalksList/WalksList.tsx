@@ -1,6 +1,6 @@
 import type { Walk } from "@pedgehog/shared";
-import { differenceInCalendarDays } from "date-fns";
 import { type ReactNode, useEffect, useState } from "react";
+
 import {
 	type AppEvent,
 	deleteWalk,
@@ -15,9 +15,11 @@ import DsShell from "../DsShell";
 import ErrorBanner from "../Error";
 import Loader from "../Loader";
 import Popup from "../Popup";
+import { ROUTE_COLOURS } from "./constants";
+import { ScavengeSummary } from "./ScavengeSummary";
 import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
-import WalkMap, { type Route as MapRoute, ROUTE_COLOURS } from "./WalkMap";
+import WalkMap, { type Route as MapRoute } from "./WalkMap";
 import WalkRow from "./WalkRow";
 import {
 	FILTER_EMPTY,
@@ -43,13 +45,13 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	const [filter, setFilter] = useState<WalkFilter>("this_week");
 
 	useEffect(() => {
-		getWalks()
-			.then(setWalks)
-			.catch(() => setError("Could not load walks"))
-			.finally(() => setLoading(false));
-		getAllEvents()
-			.then(setAllEvents)
-			.catch(() => {});
+		async function initialise() {
+			const [walks, events] = await Promise.all([getWalks(), getAllEvents()]);
+			setWalks(walks);
+			setAllEvents(events);
+			setLoading(false);
+		}
+		initialise();
 	}, []);
 
 	const assignColour = (id: number) => {
@@ -104,7 +106,6 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			else next.add(id);
 			return next;
 		});
-
 		if (deselecting) {
 			setRouteColourMap((prev) => {
 				const next = new Map(prev);
@@ -150,8 +151,10 @@ function WalksList({ onBack }: { onBack: () => void }) {
 
 	const getRouteColour = (id: number): string | undefined => {
 		if (selectedIds.size <= 1 || !selectedIds.has(id)) return undefined;
-		return routeColourMap.get(id) ??
-			(routes.get(id)?.positions.length === 0 ? "none" : undefined);
+		return (
+			routeColourMap.get(id) ??
+			(routes.get(id)?.positions.length === 0 ? "none" : undefined)
+		);
 	};
 
 	let topContent: ReactNode;
@@ -173,16 +176,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			</div>
 		);
 	} else {
-		const lastScavenge = allEvents
-			.filter((e) => e.type === "scavenge")
-			.sort((a, b) => new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime())[0];
-		const daysSince = lastScavenge
-			? differenceInCalendarDays(new Date(), new Date(lastScavenge.occurred_at))
-			: null;
-
-		topContent = daysSince !== null ? (
-			<div className="ds-top-pill ds-speech">Days since last scavenge: {daysSince}</div>
-		) : undefined;
+		topContent = ScavengeSummary(allEvents);
 	}
 
 	return (
@@ -209,7 +203,12 @@ function WalksList({ onBack }: { onBack: () => void }) {
 									</option>
 								))}
 							</select>
-							<button type="button" className="ds-btn-sm" onClick={onBack} style={{ padding: 5 }}>
+							<button
+								type="button"
+								className="ds-btn-sm"
+								onClick={onBack}
+								style={{ padding: 5 }}
+							>
 								<img
 									className="ds-icon"
 									src={homeImg}
@@ -225,7 +224,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							<Loader />
 						</div>
 					)}
-					{error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
+					{error && (
+						<ErrorBanner message={error} onDismiss={() => setError(null)} />
+					)}
 
 					<div className="ds-walks-list">
 						{!loading && filteredWalks.length === 0 && (
@@ -267,7 +268,9 @@ function WalksList({ onBack }: { onBack: () => void }) {
 								await updateWalkNotes(editNotesWalk.id, editNotesText);
 								setWalks((prev) =>
 									prev.map((w) =>
-										w.id === editNotesWalk.id ? { ...w, notes: editNotesText || null } : w,
+										w.id === editNotesWalk.id
+											? { ...w, notes: editNotesText || null }
+											: w,
 									),
 								);
 								setEditNotesWalk(null);

@@ -1,15 +1,17 @@
+import type { EventTypes } from "@pedgehog/shared";
 import { formatDuration, intervalToDuration } from "date-fns";
 
-const EVENT_EMOJIS: Record<string, string> = {
+const EVENT_TYPE_EMOJIS: Record<EventTypes, string> = {
 	dog_encounter: "🐕",
 	cat_encounter: "🐈",
 	bird_encounter: "🐦",
 	scavenge: "👹",
 	compliment: "🌸",
+	zoomies: "🐎",
 };
 
-export function eventEmoji(type: string): string {
-	return EVENT_EMOJIS[type] ?? "📌";
+export function getEventTypeEmoji(type: EventTypes): string {
+	return EVENT_TYPE_EMOJIS[type] ?? "📌";
 }
 
 export function randomAround(center: number, range: number) {

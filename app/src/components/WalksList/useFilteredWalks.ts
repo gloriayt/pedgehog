@@ -12,7 +12,7 @@ import { getFilterRange } from "./walksListFilter";
 
 type FilteredWalksResult = {
 	filteredWalks: Walk[];
-	summary: string; // e.g. "1.5km · 1hr 5min  ·  3 🐕 1 🐈"
+	summary: string; // e.g. "1.5km · 1hr 5min · 3 🐕"
 };
 
 export function useFilteredWalks(
@@ -54,12 +54,6 @@ export function useFilteredWalks(
 		const totalDogs = filteredEvents.filter(
 			(e) => e.type === "dog_encounter",
 		).length;
-		const totalCats = filteredEvents.filter(
-			(e) => e.type === "cat_encounter",
-		).length;
-		const totalBirds = filteredEvents.filter(
-			(e) => e.type === "bird_encounter",
-		).length;
 
 		const distStr =
 			totalDistance >= 1000
@@ -67,9 +61,7 @@ export function useFilteredWalks(
 				: `${Math.round(totalDistance)}m`;
 
 		let summary = `${distStr} · ${totalTime}`;
-		if (totalDogs > 0) summary += `  ·  ${totalDogs} 🐕`;
-		if (totalCats > 0) summary += ` ${totalCats} 🐈`;
-		if (totalBirds > 0) summary += ` ${totalBirds} 🐦`;
+		if (totalDogs > 0) summary += ` · ${totalDogs} 🐕`;
 
 		return { filteredWalks, summary };
 	}, [walks, allEvents, filter]);

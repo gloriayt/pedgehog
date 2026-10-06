@@ -9,30 +9,12 @@ import {
 	Tooltip,
 } from "react-leaflet";
 import type { AppEvent } from "../../api";
-import { eventEmoji } from "../../helpers";
+import { getEventTypeEmoji } from "../../helpers";
 
 export type Route = {
 	positions: [number, number][];
 	colour: string;
 };
-
-export const ROUTE_COLOURS = [
-	"#0F6E56",
-	"#4888c8",
-	"#d87888",
-	"#e8a840",
-	"#8b6f4e",
-	"#7ab8d0",
-	"#9b59b6",
-	"#e74c3c",
-	"#2ecc71",
-	"#f39c12",
-	"#1abc9c",
-	"#e67e22",
-	"#3498db",
-	"#c0392b",
-	"#27ae60",
-];
 
 type Props = {
 	mapKey: string | number;
@@ -53,6 +35,7 @@ function WalkMap({ mapKey, routes, events }: Props) {
 				/>
 				{routes.map((r, i) => (
 					<Polyline
+						// biome-ignore lint/suspicious/noArrayIndexKey: nah
 						key={i}
 						positions={r.positions}
 						color={r.colour}
@@ -69,7 +52,7 @@ function WalkMap({ mapKey, routes, events }: Props) {
 							key={e.id}
 							position={[e.lat, e.lng]}
 							icon={L.divIcon({
-								html: eventEmoji(e.type),
+								html: getEventTypeEmoji(e.type),
 								className: "ds-emoji-marker",
 								iconSize: [20, 20],
 								iconAnchor: [10, 10],

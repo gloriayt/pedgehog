@@ -1,4 +1,4 @@
-import type { EventType } from "@pedgehog/shared";
+import type { EventType, EventTypes } from "@pedgehog/shared";
 import { useEffect, useState } from "react";
 import type { AppEvent } from "../../api";
 import { getEventTypes, logEvent, updateEvent } from "../../api";
@@ -27,11 +27,19 @@ function AddEventForm({
 
 	useEffect(() => {
 		getEventTypes().then((all) => {
-			const order = ["dog_encounter", "cat_encounter", "bird_encounter", "compliment", "scavenge"];
-			const filtered = order
+			const orderedEvents: EventTypes[] = [
+				"dog_encounter",
+				"cat_encounter",
+				"bird_encounter",
+				"compliment",
+				"scavenge",
+			];
+
+			const filtered = orderedEvents
 				.map((type) => all.find((t) => t.type === type))
 				.filter((t): t is EventType => t != null);
 			setTypes(filtered);
+
 			const defaultId =
 				filtered.find((t) => t.type === "dog_encounter")?.id ??
 				filtered[0]?.id ??
@@ -80,22 +88,23 @@ function AddEventForm({
 						))}
 					</select>
 
-					{types.find((t) => t.id === selectedType)?.category !== "log_only" && (
-					<div className="ds-intensity">
-						<div className="ds-stat-lbl">INTENSITY</div>
-						<div className="ds-intensity-btns">
-							{[0, 1, 2, 3, 4, 5].map((n) => (
-								<button
-									key={n}
-									type="button"
-									className={`ds-intensity-btn${intensity === n ? " ds-intensity-active" : ""}`}
-									onClick={() => setIntensity(n)}
-								>
-									{n}
-								</button>
-							))}
+					{types.find((t) => t.id === selectedType)?.category !==
+						"log_only" && (
+						<div className="ds-intensity">
+							<div className="ds-stat-lbl">INTENSITY</div>
+							<div className="ds-intensity-btns">
+								{[0, 1, 2, 3, 4, 5].map((n) => (
+									<button
+										key={n}
+										type="button"
+										className={`ds-intensity-btn${intensity === n ? " ds-intensity-active" : ""}`}
+										onClick={() => setIntensity(n)}
+									>
+										{n}
+									</button>
+								))}
+							</div>
 						</div>
-					</div>
 					)}
 
 					<textarea
