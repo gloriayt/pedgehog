@@ -1,5 +1,5 @@
 import type { AppEvent } from "@pedgehog/shared";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays, format } from "date-fns";
 
 export function EventsSummary(allEvents: AppEvent[]) {
 	const scavenges: AppEvent[] = allEvents
@@ -61,8 +61,10 @@ export function EventsSummary(allEvents: AppEvent[]) {
 				<summary>compliments 🌸</summary>
 				<div className="details-content compliments-content">
 					<div>total: {compliments.length}</div>
-					{[{id: 1, notes: "asdfasdfasdfasdfasdsfas"}, {id: 111, notes: "asdfasdfsdsdfasdfasdfasdsfas"}, {id: 1119, notes: "asdfasdfsdasdfasdsfas"}, {id: 11, notes: "asdfasdfasdfasdfasdsfas"}, {id: 21, notes: "asdfasdfasdfasdfasdsfasasdfasdfasdfasdfasdsfas"}, {id: 123, notes: "asdfasdfasdfasdfasdsfas"}].map((c) => (
-						<div key={c.id}>{c.notes}</div>
+					{compliments.map((c) => (
+						<div key={c.id}>
+							{format(new Date(c.occurred_at), "do MMM")} · {c.notes}
+						</div>
 					))}
 				</div>
 			</details>

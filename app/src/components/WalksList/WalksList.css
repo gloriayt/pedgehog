@@ -241,8 +241,8 @@ details[open].speech {
     white-space: normal;
 }
 details[open]:has(.compliments-content) {
-    width: 300px;
-    max-width: 300px;
+    width: 340px;
+    max-width: 340px;
 }
 details.speech > summary {
     cursor: pointer;
