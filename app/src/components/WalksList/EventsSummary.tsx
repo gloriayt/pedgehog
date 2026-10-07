@@ -1,20 +1,14 @@
 import type { AppEvent } from "@pedgehog/shared";
 import { differenceInCalendarDays, format } from "date-fns";
 
+const byNewest = (a: AppEvent, b: AppEvent) =>
+	new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime();
+
 export function EventsSummary(allEvents: AppEvent[]) {
-	const scavenges: AppEvent[] = allEvents
-		.filter((e) => e.type === "scavenge")
-		.sort(
-			(a, b) =>
-				new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
-		);
-	const compliments: AppEvent[] = allEvents
-		.filter((e) => e.type === "compliment")
-		.filter((c) => !!c.notes && c.notes.length > 0) // remove empty ones
-		.sort(
-			(a, b) =>
-				new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime(),
-		);
+	const scavenges = allEvents.filter((e) => e.type === "scavenge").sort(byNewest);
+	const compliments = allEvents
+		.filter((e) => e.type === "compliment" && e.notes)
+		.sort(byNewest);
 
 	if (scavenges.length === 0 && compliments.length === 0) {
 		return (
@@ -24,7 +18,7 @@ export function EventsSummary(allEvents: AppEvent[]) {
 		);
 	}
 
-	const lastScavenge: AppEvent | undefined = scavenges[0];
+	const lastScavenge = scavenges[0];
 
 	const daysSinceLast = lastScavenge
 		? differenceInCalendarDays(new Date(), new Date(lastScavenge.occurred_at))

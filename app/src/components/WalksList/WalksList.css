@@ -92,18 +92,6 @@
 	min-width: 0;
 }
 
-.walk-right {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.walk-duration {
-	font-size: 8px;
-	color: var(--text-light);
-	white-space: nowrap;
-}
-
 .walk-delete {
 	background: none;
 	border: 1px solid var(--panel-border);
@@ -213,46 +201,50 @@
 /* ===== EVENTS SUMMARY ===== */
 
 .events-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-    max-height: 250px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	align-items: center;
+	max-height: 250px;
 }
 
 .compliments-content {
-    overflow-y: auto;
-    overflow-x: hidden;
-    white-space: normal;
-    word-break: break-word;
+	overflow-y: auto;
+	overflow-x: hidden;
+	white-space: normal;
+	word-break: break-word;
 }
 
 .events-summary:has(.scavenges-content[open]) .compliments-content {
-    max-height: 110px;
+	max-height: 110px;
 }
 
 details.speech {
-    display: block;
-    text-align: center;
-    width: 150px;
-    cursor: pointer;
+	display: block;
+	text-align: center;
+	width: 150px;
+	cursor: pointer;
 }
+
 details[open].speech {
-    width: 200px;
-    white-space: normal;
+	width: 200px;
+	white-space: normal;
 }
+
 details[open]:has(.compliments-content) {
-    width: 330px;
-    max-width: 330px;
+	width: 330px;
+	max-width: 330px;
 }
+
 details.speech > summary {
-    cursor: pointer;
+	cursor: pointer;
 	font-size: 12px;
 }
+
 .details-content {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    margin-top: 6px;
-    padding-bottom: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin-top: 6px;
+	padding-bottom: 4px;
 }
