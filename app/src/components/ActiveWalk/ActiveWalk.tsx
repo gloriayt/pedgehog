@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./ActiveWalk.css";
 import {
 	type AppEvent,
 	deleteEvent,
@@ -123,21 +124,21 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 			listLayout
 			bottom={({ scavengeParty }) => (
 				<>
-					<div className="ds-stats-row ds-stats-compact">
-						<div className="ds-stat">
-							<div className="ds-stat-val">
+					<div className="stats-row stats-compact">
+						<div className="stat">
+							<div className="stat-val">
 								{String(Math.floor(elapsed / 60)).padStart(2, "0")}:
 								{String(elapsed % 60).padStart(2, "0")}
 							</div>
-							<div className="ds-stat-lbl">TIME</div>
+							<div className="stat-lbl">TIME</div>
 						</div>
-						<div className="ds-stat">
-							<div className="ds-stat-val">{Math.round(distance)}</div>
-							<div className="ds-stat-lbl">DIST</div>
+						<div className="stat">
+							<div className="stat-val">{Math.round(distance)}</div>
+							<div className="stat-lbl">DIST</div>
 						</div>
 						<button
 							type="button"
-							className="ds-btn ds-btn-go ds-btn-compact"
+							className="btn btn-go btn-compact"
 							onClick={() => setPopup("end")}
 							disabled={ending}
 						>
@@ -145,7 +146,7 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 								<Loader />
 							) : (
 								<img
-									className="ds-icon"
+									className="icon"
 									src={homeImg}
 									alt="Save"
 									style={{ width: 20, height: 20 }}
@@ -154,11 +155,11 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 						</button>
 						<button
 							type="button"
-							className="ds-btn ds-btn-stop ds-btn-compact"
+							className="btn btn-stop btn-compact"
 							onClick={() => setPopup("cancel")}
 						>
 							<img
-								className="ds-icon"
+								className="icon"
 								src={binImg}
 								alt="Cancel"
 								style={{ width: 20, height: 20 }}
@@ -199,12 +200,12 @@ function ActiveWalk({ walkId, onEnd }: Props) {
 							message="Save walk?"
 							confirmLabel="yes pls!"
 							cancelLabel="not yet"
-							confirmStyle="ds-btn-sm ds-btn-sm-go"
+							confirmStyle="btn-sm btn-sm-go"
 							onConfirm={() => { setPopup(null); handleEnd(); }}
 							onCancel={() => setPopup(null)}
 						>
 							<textarea
-								className="ds-textarea"
+								className="textarea"
 								placeholder="Walk notes (optional)"
 								value={walkNotes}
 								onChange={(e) => setWalkNotes(e.target.value)}

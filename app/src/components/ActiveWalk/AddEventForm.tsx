@@ -73,11 +73,11 @@ function AddEventForm({
 	};
 
 	return (
-		<div className="ds-confirm-overlay">
-			<div className="ds-confirm">
-				<div className="ds-log-form">
+		<div className="confirm-overlay">
+			<div className="confirm">
+				<div className="log-form">
 					<select
-						className="ds-select"
+						className="select"
 						value={selectedType ?? ""}
 						onChange={(e) => setSelectedType(Number(e.target.value))}
 					>
@@ -90,14 +90,14 @@ function AddEventForm({
 
 					{types.find((t) => t.id === selectedType)?.category !==
 						"log_only" && (
-						<div className="ds-intensity">
-							<div className="ds-stat-lbl">INTENSITY</div>
-							<div className="ds-intensity-btns">
+						<div className="intensity">
+							<div className="stat-lbl">INTENSITY</div>
+							<div className="intensity-btns">
 								{[0, 1, 2, 3, 4, 5].map((n) => (
 									<button
 										key={n}
 										type="button"
-										className={`ds-intensity-btn${intensity === n ? " ds-intensity-active" : ""}`}
+										className={`intensity-btn${intensity === n ? " intensity-active" : ""}`}
 										onClick={() => setIntensity(n)}
 									>
 										{n}
@@ -108,7 +108,7 @@ function AddEventForm({
 					)}
 
 					<textarea
-						className="ds-textarea"
+						className="textarea"
 						placeholder="Notes (optional)"
 						value={notes}
 						onChange={(e) => setNotes(e.target.value)}
@@ -116,15 +116,15 @@ function AddEventForm({
 					/>
 				</div>
 
-				<div className="ds-btn-row">
+				<div className="btn-row">
 					<button
 						type="button"
-						className="ds-btn-sm ds-btn-sm-go"
+						className="btn-sm btn-sm-go"
 						onClick={handleSave}
 					>
 						SAVE
 					</button>
-					<button type="button" className="ds-btn-sm" onClick={onCancel}>
+					<button type="button" className="btn-sm" onClick={onCancel}>
 						CANCEL
 					</button>
 				</div>

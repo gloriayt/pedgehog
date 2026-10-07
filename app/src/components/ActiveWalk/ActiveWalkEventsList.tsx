@@ -11,32 +11,32 @@ type Props = {
 
 function ActiveWalkEventsList({ events, onAdd, onEdit, onDelete }: Props) {
 	return (
-		<div className="ds-events-list">
+		<div className="events-list">
 			{events.map((e) => (
-				<div key={e.id} className="ds-event-row">
-					<span className="ds-event-emoji">
+				<div key={e.id} className="event-row">
+					<span className="event-emoji">
 						{getEventTypeEmoji(e.type)}
 					</span>
-					<div className="ds-event-info">
+					<div className="event-info">
 						<div>
 							{e.label}
 							{e.intensity ? ` (${e.intensity}/5)` : ""}
 							{" · "}
 							{format(new Date(e.occurred_at), "h:mma")}
 						</div>
-						{e.notes && <div className="ds-event-notes">{e.notes}</div>}
+						{e.notes && <div className="event-notes">{e.notes}</div>}
 					</div>
-					<div className="ds-event-actions">
+					<div className="event-actions">
 						<button
 							type="button"
-							className="ds-event-action"
+							className="event-action"
 							onClick={() => onEdit(e)}
 						>
 							EDIT
 						</button>
 						<button
 							type="button"
-							className="ds-event-action ds-event-action-delete"
+							className="event-action event-action-delete"
 							onClick={() => onDelete(e.id)}
 						>
 							X
@@ -46,7 +46,7 @@ function ActiveWalkEventsList({ events, onAdd, onEdit, onDelete }: Props) {
 			))}
 			<button
 				type="button"
-				className="ds-btn-sm"
+				className="btn-sm"
 				onClick={onAdd}
 				style={{ marginTop: 4 }}
 			>

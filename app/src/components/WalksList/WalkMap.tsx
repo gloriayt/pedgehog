@@ -27,7 +27,7 @@ function WalkMap({ mapKey, routes, events }: Props) {
 	if (allPositions.length === 0) return null;
 
 	return (
-		<div className="ds-map-container">
+		<div className="map-container">
 			<MapContainer key={mapKey} bounds={allPositions}>
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -53,7 +53,7 @@ function WalkMap({ mapKey, routes, events }: Props) {
 							position={[e.lat, e.lng]}
 							icon={L.divIcon({
 								html: getEventTypeEmoji(e.type),
-								className: "ds-emoji-marker",
+								className: "emoji-marker",
 								iconSize: [20, 20],
 								iconAnchor: [10, 10],
 							})}

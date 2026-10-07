@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import "./DsShell.css";
 import boneImg from "../assets/bone.webp";
 import heartImg from "../assets/heart.webp";
 import happyImg from "../assets/pretzel-happy.webp";
@@ -122,7 +123,7 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 								{hearts.map((h) => (
 									<div
 										key={h.id}
-										className="ds-heart-react"
+										className="heart-react"
 										style={{ top: `${h.top}%`, left: `${h.left}%` }}
 									>
 										<img src={heartImg} alt="" />
@@ -131,7 +132,7 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 								{bones.map((b) => (
 									<div
 										key={b.id}
-										className={`ds-bone-throw ds-bone-${b.direction}`}
+										className={`bone-throw bone-${b.direction}`}
 									>
 										<img src={boneImg} alt="" />
 									</div>
@@ -139,23 +140,23 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 								{drumsticks.map((d) => (
 									<div
 										key={d.id}
-										className="ds-drumstick"
+										className="drumstick"
 										style={{ left: `${d.left}%`, animationDelay: `${d.delay}s` }}
 									>
 										🍗
 									</div>
 								))}
 								{walking ? (
-									<div className="ds-speech">
+									<div className="speech">
 										<Loader /> On a walk!
 									</div>
 								) : (
-									<div className="ds-title">PRETZEL</div>
+									<div className="title">PRETZEL</div>
 								)}
 								<div style={{ position: "relative" }}>
-									{reaction === "woah" && <div className="ds-woah">‼️</div>}
+									{reaction === "woah" && <div className="woah">‼️</div>}
 									<img
-										className={`ds-sprite${walking ? " ds-sprite-waddle" : ""}${frenzy ? " ds-sprite-frenzy" : ""}`}
+										className={`sprite${walking ? " sprite-waddle" : ""}${frenzy ? " sprite-frenzy" : ""}`}
 										src={(reaction === "happy" || blinking) && !walking ? happyImg : sprite}
 										alt="Pretzel"
 										onClick={pet}
@@ -177,7 +178,7 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 
 			<div className="ds-console-bottom">
 				<div className="ds-bezel-bottom">
-					<div className={`ds-screen-bottom${listLayout ? " ds-layout-list" : ""}`}>
+					<div className={`ds-screen-bottom${listLayout ? " layout-list" : ""}`}>
 						{bottomContent}
 					</div>
 				</div>

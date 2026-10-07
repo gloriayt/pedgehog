@@ -1,0 +1,228 @@
+/* ===== WALKS LIST HEADER ===== */
+
+.walks-header {
+	display: flex;
+	align-items: stretch;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	z-index: 1;
+	position: relative;
+}
+
+.walks-header .speech {
+	white-space: nowrap;
+}
+
+.stats-inline {
+	font-size: 8px;
+	color: var(--text-light);
+	border: 1px solid var(--panel-border);
+	border-radius: 4px;
+	padding: 0 10px;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+}
+
+.header-actions {
+	display: flex;
+	align-items: stretch;
+	gap: 6px;
+}
+
+.select-sm {
+	width: auto;
+	font-size: 8px;
+	padding: 5px 6px;
+	height: 100%;
+}
+
+/* ===== WALKS LIST ===== */
+
+.top-pill {
+	position: absolute;
+	top: 24px;
+	left: 50%;
+	translate: -50% 0;
+	white-space: nowrap;
+	max-width: none;
+}
+
+.empty-walks-list {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.walks-list {
+	width: 100%;
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	position: relative;
+	z-index: 1;
+}
+
+/* ===== WALK ROW ===== */
+
+.walk-row {
+	background: var(--panel);
+	border: 1px solid var(--panel-border);
+	border-radius: 6px;
+	padding: 6px 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+}
+
+.walk-left {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	flex: 1;
+	min-width: 0;
+}
+
+.walk-right {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.walk-duration {
+	font-size: 8px;
+	color: var(--text-light);
+	white-space: nowrap;
+}
+
+.walk-delete {
+	background: none;
+	border: 1px solid var(--panel-border);
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 3px;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.4;
+	font-family: inherit;
+}
+
+.walk-delete:active {
+	opacity: 0.8;
+}
+
+.walk-delete img {
+	width: 12px;
+	height: 12px;
+}
+
+.route-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	flex-shrink: 0;
+	margin-right: 8px;
+}
+
+.route-none {
+	background: none;
+	font-size: 10px;
+	font-weight: 700;
+	color: var(--text-light);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.walk-row:active {
+	opacity: 0.7;
+}
+
+.walk-row-selected {
+	border-color: var(--text);
+}
+
+.walk-date {
+	font-size: 11px;
+	font-weight: 400;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.walk-suburb {
+	color: var(--text-light);
+	font-size: 8px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.walk-notes-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	margin-right: 6px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.walk-action-icon {
+	width: 12px;
+	height: 12px;
+}
+
+/* ===== MAP ===== */
+
+.map-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: inherit;
+	z-index: 1;
+}
+
+.map-container .leaflet-container {
+	height: 100% !important;
+	width: 100% !important;
+	border-radius: inherit;
+}
+
+.emoji-marker {
+	font-size: 18px;
+	line-height: 1;
+	text-align: center;
+	background: none !important;
+	border: none !important;
+}
+
+/* ===== SCAVENGE SUMMARY ===== */
+
+details.speech {
+    display: block;
+    text-align: center;
+}
+details.speech > summary {
+    cursor: pointer;
+	font-size: 14px;
+}
+.details-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+  }

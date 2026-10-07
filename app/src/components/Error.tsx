@@ -5,9 +5,9 @@ type Props = {
 
 function ErrorBanner({ message, onDismiss }: Props) {
 	return (
-		<div className="ds-error">
+		<div className="error">
 			{message}
-			<button type="button" className="ds-error-close" onClick={onDismiss}>
+			<button type="button" className="error-close" onClick={onDismiss}>
 				✕
 			</button>
 		</div>

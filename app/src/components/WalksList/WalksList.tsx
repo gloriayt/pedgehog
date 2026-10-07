@@ -1,5 +1,6 @@
 import type { Walk } from "@pedgehog/shared";
 import { type ReactNode, useEffect, useState } from "react";
+import "./WalksList.css";
 
 import {
 	type AppEvent,
@@ -171,7 +172,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 	} else if (selectedIds.size > 0) {
 		const anyPending = selectedIdList.some((id) => !routes.has(id));
 		topContent = (
-			<div className="ds-speech">
+			<div className="speech">
 				{anyPending ? "Loading routes..." : "No routes available"}
 			</div>
 		);
@@ -187,13 +188,13 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			onButtonPress={toggleAll}
 			bottom={
 				<>
-					<div className="ds-walks-header">
-						<div className="ds-stats-inline">
+					<div className="walks-header">
+						<div className="stats-inline">
 							{loading ? <Loader /> : summary}
 						</div>
-						<div className="ds-header-actions">
+						<div className="header-actions">
 							<select
-								className="ds-select ds-select-sm"
+								className="select select-sm"
 								value={filter}
 								onChange={(e) => setFilter(e.target.value as WalkFilter)}
 							>
@@ -205,12 +206,12 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							</select>
 							<button
 								type="button"
-								className="ds-btn-sm"
+								className="btn-sm"
 								onClick={onBack}
 								style={{ padding: 5 }}
 							>
 								<img
-									className="ds-icon"
+									className="icon"
 									src={homeImg}
 									alt="Back"
 									style={{ width: 15, height: 15 }}
@@ -220,7 +221,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 					</div>
 
 					{loading && (
-						<div className="ds-speech">
+						<div className="speech">
 							<Loader />
 						</div>
 					)}
@@ -228,10 +229,10 @@ function WalksList({ onBack }: { onBack: () => void }) {
 						<ErrorBanner message={error} onDismiss={() => setError(null)} />
 					)}
 
-					<div className="ds-walks-list">
+					<div className="walks-list">
 						{!loading && filteredWalks.length === 0 && (
-							<div className="ds-empty">
-								<div className="ds-speech">{FILTER_EMPTY[filter]}</div>
+							<div className="empty-walks-list">
+								<div className="speech">{FILTER_EMPTY[filter]}</div>
 							</div>
 						)}
 						{filteredWalks.map((w) => (
@@ -262,7 +263,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 						<Popup
 							message={editNotesWalk.notes ? "Edit notes" : "Add notes"}
 							confirmLabel="save"
-							confirmStyle="ds-btn-sm ds-btn-sm-go"
+							confirmStyle="btn-sm btn-sm-go"
 							cancelLabel="cancel"
 							onConfirm={async () => {
 								await updateWalkNotes(editNotesWalk.id, editNotesText);
@@ -278,7 +279,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 							onCancel={() => setEditNotesWalk(null)}
 						>
 							<textarea
-								className="ds-textarea"
+								className="textarea"
 								value={editNotesText}
 								onChange={(e) => setEditNotesText(e.target.value)}
 								rows={3}

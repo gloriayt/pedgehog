@@ -42,18 +42,18 @@ function WalkRow({
 	return (
 		<button
 			type="button"
-			className={`ds-walk-row${selected ? " ds-walk-row-selected" : ""}`}
+			className={`walk-row${selected ? " walk-row-selected" : ""}`}
 			onClick={onSelect}
 		>
-			<div className="ds-walk-left">
-				<div className="ds-walk-date">
+			<div className="walk-left">
+				<div className="walk-date">
 					{dateLabel}
 					{[...typeCounts].map(
 						([type, count]) =>
 							` ${Array(count).fill(getEventTypeEmoji(type)).join(" ")}`,
 					)}
 				</div>
-				<div className="ds-walk-suburb">
+				<div className="walk-suburb">
 					{w.suburb ?? "Unknown"}
 					{w.distance ? ` · ${Math.round(w.distance)}m` : ""}
 					{" · "}
@@ -62,24 +62,24 @@ function WalkRow({
 			</div>
 
 			{routeColour === "none" ? (
-				<span className="ds-route-dot ds-route-none">✕</span>
+				<span className="route-dot route-none">✕</span>
 			) : routeColour ? (
-				<span className="ds-route-dot" style={{ background: routeColour }} />
+				<span className="route-dot" style={{ background: routeColour }} />
 			) : null}
 
 			<button
 				type="button"
-				className="ds-walk-notes-btn"
+				className="walk-notes-btn"
 				onClick={(e) => {
 					e.stopPropagation();
 					onEditNotes();
 				}}
 			>
-				<img src={penImg} alt="Notes" className="ds-walk-action-icon" />
+				<img src={penImg} alt="Notes" className="walk-action-icon" />
 			</button>
 			<button
 				type="button"
-				className="ds-walk-delete"
+				className="walk-delete"
 				onClick={(e) => {
 					e.stopPropagation();
 					onDelete();

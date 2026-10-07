@@ -42,10 +42,10 @@ function App() {
 			sprite={idleImg}
 			bottom={({ throwBone }) => (
 				<>
-					<div className="ds-speech">
+					<div className="speech">
 						Ready for walkies!
 						<img
-							className="ds-icon ds-icon-xs"
+							className="icon icon-xs"
 							src={boneImg}
 							alt=""
 							onClick={throwBone}
@@ -55,10 +55,10 @@ function App() {
 							}}
 						/>
 					</div>
-					<div className="ds-btn-row">
+					<div className="btn-row">
 						<button
 							type="button"
-							className="ds-btn ds-btn-go"
+							className="btn btn-go"
 							onClick={handleStart}
 							disabled={pending}
 						>
@@ -66,7 +66,7 @@ function App() {
 						</button>
 						<button
 							type="button"
-							className="ds-btn ds-btn-secondary"
+							className="btn btn-secondary"
 							onClick={() => setShowWalks(true)}
 						>
 							WALKS
