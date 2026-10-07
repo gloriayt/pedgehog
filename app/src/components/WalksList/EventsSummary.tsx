@@ -44,9 +44,15 @@ export function EventsSummary(allEvents: AppEvent[]) {
 	const averageDaysBetweenScavenges =
 		totalDaysBetweenScavenges / scavenges.length;
 
+	const toggleDetails = (e: React.MouseEvent<HTMLDetailsElement>) => {
+		e.preventDefault();
+		e.currentTarget.toggleAttribute("open");
+	};
+
 	return (
 		<div className="top-pill events-summary">
-			<details className="speech scavenges-content">
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: ignore keyboard */}
+			<details className="speech scavenges-content" onClick={toggleDetails}>
 				<summary>scavenges 👹</summary>
 				<div className="details-content">
 					<div>total: {scavenges.length}</div>
@@ -57,13 +63,14 @@ export function EventsSummary(allEvents: AppEvent[]) {
 				</div>
 			</details>
 
-			<details className="speech">
+			{/* biome-ignore lint/a11y/useKeyWithClickEvents: ignore keyboard */}
+			<details className="speech" onClick={toggleDetails}>
 				<summary>compliments 🌸</summary>
 				<div className="details-content compliments-content">
 					<div>total: {compliments.length}</div>
 					{compliments.map((c) => (
 						<div key={c.id}>
-							{format(new Date(c.occurred_at), "do MMM")} · {c.notes}
+							{format(new Date(c.occurred_at), "d MMM")} · {c.notes}
 						</div>
 					))}
 				</div>

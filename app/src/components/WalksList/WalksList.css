@@ -235,14 +235,15 @@ details.speech {
     display: block;
     text-align: center;
     width: 150px;
+    cursor: pointer;
 }
 details[open].speech {
     width: 200px;
     white-space: normal;
 }
 details[open]:has(.compliments-content) {
-    width: 340px;
-    max-width: 340px;
+    width: 330px;
+    max-width: 330px;
 }
 details.speech > summary {
     cursor: pointer;
