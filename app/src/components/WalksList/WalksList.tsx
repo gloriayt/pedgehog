@@ -17,7 +17,7 @@ import ErrorBanner from "../Error";
 import Loader from "../Loader";
 import Popup from "../Popup";
 import { ROUTE_COLOURS } from "./constants";
-import { ScavengeSummary } from "./ScavengeSummary";
+import { EventsSummary } from "./EventsSummary";
 import { useFilteredWalks } from "./useFilteredWalks";
 import WalkDeleteConfirm from "./WalkDeleteConfirm";
 import WalkMap, { type Route as MapRoute } from "./WalkMap";
@@ -177,7 +177,7 @@ function WalksList({ onBack }: { onBack: () => void }) {
 			</div>
 		);
 	} else {
-		topContent = ScavengeSummary(allEvents);
+		topContent = EventsSummary(allEvents);
 	}
 
 	return (
