@@ -1,4 +1,4 @@
-import { EventTypesSchema, type EventTypes, type Walk } from "@pedgehog/shared";
+import type { EventTypes, Walk } from "@pedgehog/shared";
 import { format, isToday, isYesterday } from "date-fns";
 import type { AppEvent } from "../../api";
 import binImg from "../../assets/bin.webp";
@@ -34,8 +34,7 @@ function WalkRow({
 			: format(startDate, "EEE d MMM h:mma");
 
 	const typeCounts = events.reduce((acc, e) => {
-		if (EventTypesSchema.options.includes(e.type))
-			acc.set(e.type, (acc.get(e.type) ?? 0) + 1);
+		acc.set(e.type, (acc.get(e.type) ?? 0) + 1);
 		return acc;
 	}, new Map<EventTypes, number>());
 

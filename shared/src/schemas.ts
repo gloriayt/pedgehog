@@ -35,15 +35,15 @@ export const EventTypesSchema = z.enum([
 	"bird_encounter",
 	"scavenge",
 	"compliment",
-	'zoomies',
+	"zoomies",
 ]);
 export type EventTypes = z.infer<typeof EventTypesSchema>;
 
 export const EventCategoriesSchema = z.enum([
-	'animal_interaction',
-	'enrichment',
-	'log_only',
-])
+	"animal_interaction",
+	"enrichment",
+	"log_only",
+]);
 export type EventCategories = z.infer<typeof EventCategoriesSchema>;
 
 export const EventTypeSchema = z.object({

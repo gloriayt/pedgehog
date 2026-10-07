@@ -36,6 +36,7 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 	const [drumsticks, setDrumsticks] = useState<Drumstick[]>([]);
 	const [frenzy, setFrenzy] = useState(false);
 	const [reaction, setReaction] = useState<Reaction>(null);
+	const [blinking, setBlinking] = useState(false);
 	const heartIdRef = useRef(0);
 	const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
@@ -45,8 +46,6 @@ function DsShell({ sprite, walking, top, bottom, listLayout, onButtonPress }: Pr
 			for (const t of timers) clearTimeout(t);
 		};
 	}, []);
-
-	const [blinking, setBlinking] = useState(false);
 
 	useEffect(() => {
 		if (walking) return;

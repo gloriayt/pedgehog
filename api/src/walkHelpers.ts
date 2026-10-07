@@ -61,7 +61,7 @@ export async function endStaleWalks(): Promise<number[]> {
 		await fillSuburb(id);
 	}
 
-	return rows.map((r: { id: number }) => r.id);
+	return rows.map((r) => r.id as number);
 }
 
 /** Fill missing suburbs for all walks. */
