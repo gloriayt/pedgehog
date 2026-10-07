@@ -45,25 +45,26 @@ export function EventsSummary(allEvents: AppEvent[]) {
 		totalDaysBetweenScavenges / scavenges.length;
 
 	return (
-		<div
-			className="top-pill"
-			style={{ display: "flex", flexDirection: "column", gap: "6px" }}
-		>
-			<details className="speech">
-				<summary>scavenges</summary>
-				<div>total: {scavenges.length}</div>
-				<div>days since last: {daysSinceLast}</div>
-				{scavenges.length > 2 && (
-					<div>avg. days between: {averageDaysBetweenScavenges}</div>
-				)}
+		<div className="top-pill events-summary">
+			<details className="speech scavenges-content">
+				<summary>scavenges 👹</summary>
+				<div className="details-content">
+					<div>total: {scavenges.length}</div>
+					<div>days since last: {daysSinceLast}</div>
+					{scavenges.length > 2 && (
+						<div>avg. days between: {averageDaysBetweenScavenges}</div>
+					)}
+				</div>
 			</details>
 
 			<details className="speech">
-				<summary>compliments</summary>
-				<div>total: {compliments.length}</div>
-				{compliments.map((c) => (
-					<div key={c.id}>{c.notes}</div>
-				))}
+				<summary>compliments 🌸</summary>
+				<div className="details-content compliments-content">
+					<div>total: {compliments.length}</div>
+					{[{id: 1, notes: "asdfasdfasdfasdfasdsfas"}, {id: 111, notes: "asdfasdfsdsdfasdfasdfasdsfas"}, {id: 1119, notes: "asdfasdfsdasdfasdsfas"}, {id: 11, notes: "asdfasdfasdfasdfasdsfas"}, {id: 21, notes: "asdfasdfasdfasdfasdsfasasdfasdfasdfasdfasdsfas"}, {id: 123, notes: "asdfasdfasdfasdfasdsfas"}].map((c) => (
+						<div key={c.id}>{c.notes}</div>
+					))}
+				</div>
 			</details>
 		</div>
 	);

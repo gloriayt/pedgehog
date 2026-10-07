@@ -210,19 +210,48 @@
 	border: none !important;
 }
 
-/* ===== SCAVENGE SUMMARY ===== */
+/* ===== EVENTS SUMMARY ===== */
+
+.events-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    max-height: 250px;
+}
+
+.compliments-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.events-summary:has(.scavenges-content[open]) .compliments-content {
+    max-height: 110px;
+}
 
 details.speech {
     display: block;
     text-align: center;
+    width: 150px;
+}
+details[open].speech {
+    width: 200px;
+    white-space: normal;
+}
+details[open]:has(.compliments-content) {
+    width: 300px;
+    max-width: 300px;
 }
 details.speech > summary {
     cursor: pointer;
-	font-size: 14px;
+	font-size: 12px;
 }
 .details-content {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-top: 6px;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 6px;
+    padding-bottom: 4px;
+}
